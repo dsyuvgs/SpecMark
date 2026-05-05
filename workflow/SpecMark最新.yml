@@ -1,0 +1,3797 @@
+app:
+  description: 产品规范标记工具。给需求规格打上规范标记，不做生成，只做检查和标注。两大核心能力：1. PRD风险标记：识别企业术语误用、场景混淆、验收标准模糊、数据来源缺失，逐项标记风险等级和修改方向；2.
+    用户反馈标记：输入原始反馈，自动标注类型、情绪、优先级、用户标签。
+  icon: 🔍
+  icon_background: '#E4FBCC'
+  icon_type: emoji
+  mode: advanced-chat
+  name: SpecMark
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/deepseek:0.0.12@37699cc3d1ea9e006348a7273a514f3ddf60ffb0649dc735c594c8da6a80934b
+    version: null
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai:0.3.5@dcc15b5847dbe38c64c2a9fdc1ea2d46466b7028eb4766b251bc363b0eec3af3
+    version: null
+kind: app
+version: 0.6.0
+workflow:
+  conversation_variables:
+  - description: PRD读者类型
+    id: 5dd27c8e-e116-4315-97a7-816ddb0d2629
+    name: reader_type
+    selector:
+    - conversation
+    - reader_type
+    value: 产品
+    value_type: string
+  - description: 用户声明的行业/产品类型
+    id: 54922ecb-c851-41df-8d77-4526493c73f3
+    name: scene
+    selector:
+    - conversation
+    - scene
+    value: 未指定
+    value_type: string
+  - description: 风险类型记录
+    id: 339edfc9-8261-45ae-99cc-5352a70a17f3
+    name: risk_types
+    selector:
+    - conversation
+    - risk_types
+    value: ''
+    value_type: string
+  - description: PRD检查累计次数
+    id: a37c35f3-5163-40e2-81cd-84d45ffb1998
+    name: check_count
+    selector:
+    - conversation
+    - check_count
+    value: 0
+    value_type: integer
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      - .CSV
+      - .JSON
+      - .TXT
+      - .XLSX
+      - .XLS
+      allowed_file_types:
+      - image
+      - document
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: true
+      fileUploadConfig:
+        attachment_image_file_size_limit: 2
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        file_upload_limit: 50
+        image_file_batch_limit: 10
+        image_file_size_limit: 10
+        single_chunk_attachment_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: |-
+      👋 我是 SpecMark，产品规范标记工具。
+
+      你可以：
+      1. 粘贴PRD片段让我标记风险
+      2. 粘贴用户反馈让我分类标注
+      3. 📎 上传CSV/JSON/TXT文件，批量分类反馈（支持500+条）
+      4. 📎 上传CSV文件+说"批量PRD检查"，批量检查PRD
+      5. 告诉我你的行业/产品类型，我会针对性检查
+
+      示例输入：
+      - 「用户管理模块支持多租户」
+      - 「充了会员还是闪退，太垃圾了」
+      - 「我在做ToC社交APP」
+      - 上传包含多条反馈的文件 → 自动批量分类并生成报告
+      - 上传PRD文件 + 「批量PRD检查」→ 逐条检查PRD风险
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions:
+    - 检查这段PRD：用户管理模块支持多租户和RBAC权限管理
+    - 分类这条反馈：充了会员还是闪退，太垃圾了
+    - 我在做ToC社交APP
+    - 批量分类这些反馈
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: edge-start-classifier
+      source: '1776648944081'
+      sourceHandle: source
+      target: '1776665743672'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: edge-classifier-router
+      source: '1776665743672'
+      sourceHandle: source
+      target: '1776670000001'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: edge-router-ifelse
+      source: '1776670000001'
+      sourceHandle: source
+      target: '1776665766609'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: edge-prd-llm-code
+      source: '1776665833871'
+      sourceHandle: source
+      target: '1776668636204'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: edge-code-answer
+      source: '1776668636204'
+      sourceHandle: source
+      target: '1776668650000'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: edge-fb-extract-rule
+      source: '1776665889997'
+      sourceHandle: source
+      target: '1776670000002'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: edge-fb-rule-answer
+      source: '1776670000002'
+      sourceHandle: source
+      target: '1776665895831'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: document-extractor
+      id: edge-ifelse-scene-llm
+      source: '1776665766609'
+      sourceHandle: d1ecb4c7-cb7e-4ec5-82b3-f1b8f583a8a3
+      target: '1776680000004'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: edge-scene-llm-json-code
+      source: '1776665919302'
+      sourceHandle: source
+      target: '1776668700002'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: edge-scene-code-answer
+      selected: false
+      source: '1776668700002'
+      sourceHandle: source
+      target: '1776665940760'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: edge-ifelse-batch-extract
+      source: '1776665766609'
+      sourceHandle: a1b2c3d4-batch-0001-0000-000000000001
+      target: '1776665919302'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: edge-batch-llm-code
+      source: '1776680000001'
+      sourceHandle: source
+      target: '1776680000002'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: edge-batch-code-answer
+      source: '1776680000002'
+      sourceHandle: source
+      target: '1776680000003'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: edge-ifelse-batchprd-extract
+      source: '1776665766609'
+      sourceHandle: a1b2c3d4-batch-prd-0001-000000000001
+      target: '1776666037112'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: document-extractor
+        targetType: code
+      id: edge-batchprd-extract-format
+      source: '1776680000007'
+      sourceHandle: source
+      target: '1776680000005'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: knowledge-retrieval
+      id: edge-batchprd-format-knowledge
+      source: '1776680000005'
+      sourceHandle: source
+      target: '1776690000003'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: edge-batchprd-knowledge-llm
+      source: '1776690000003'
+      sourceHandle: source
+      target: '1776680000006'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: edge-batchprd-llm-risk
+      source: '1776680000006'
+      sourceHandle: source
+      target: '1776680000008'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: document-extractor
+      id: edge-ifelse-prd-file
+      source: '1776665766609'
+      sourceHandle: 'true'
+      target: '1776680000007'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: edge-batch-risk-answer
+      source: '1776680000008'
+      sourceHandle: source
+      target: '1776680000009'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: edge-ifelse-prd-knowledge
+      source: '1776665766609'
+      sourceHandle: dc998848-e72c-408d-88bb-b6b47b160177
+      target: '1776690000001'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: edge-prd-knowledge-llm
+      source: '1776690000001'
+      sourceHandle: source
+      target: '1776665833871'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: edge-ifelse-fb-knowledge
+      source: '1776665766609'
+      sourceHandle: 210a059d-f110-410d-a2b1-75d9620efb43
+      target: '1776690000002'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: edge-fb-knowledge-llm
+      source: '1776690000002'
+      sourceHandle: source
+      target: '1776665889997'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: document-extractor
+        targetType: iteration
+      id: 1776680000004-source-1777369155274-target
+      source: '1776680000004'
+      sourceHandle: source
+      target: '1777369155274'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: iteration
+        targetType: code
+      id: 1777369155274-source-1776680000001-target
+      source: '1777369155274'
+      sourceHandle: source
+      target: '1776680000001'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1777369155274'
+        sourceType: iteration-start
+        targetType: knowledge-retrieval
+      id: 1777369155274start-source-1777369330228-target
+      source: 1777369155274start
+      sourceHandle: source
+      target: '1777369330228'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1777369155274'
+        sourceType: knowledge-retrieval
+        targetType: llm
+      id: 1777369330228-source-1777369510912-target
+      selected: false
+      source: '1777369330228'
+      sourceHandle: source
+      target: '1777369510912'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    nodes:
+    - data:
+        selected: false
+        title: 用户输入
+        type: start
+        variables: []
+      height: 73
+      id: '1776648944081'
+      position:
+        x: 0
+        y: 587
+      positionAbsolute:
+        x: 0
+        y: 587
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_array: true
+        is_array_file: true
+        selected: false
+        selector:
+        - '1776648944081'
+        - sys.files
+        title: 反馈文档提取
+        type: document-extractor
+        variable_selector:
+        - sys
+        - files
+      height: 104
+      id: '1776680000004'
+      position:
+        x: 1388
+        y: 82
+      positionAbsolute:
+        x: 1388
+        y: 82
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        is_array: true
+        is_array_file: true
+        selected: false
+        selector:
+        - '1776648944081'
+        - sys.files
+        title: PRD文档提取
+        type: document-extractor
+        variable_selector:
+        - sys
+        - files
+      height: 104
+      id: '1776680000007'
+      position:
+        x: 1388
+        y: 709
+      positionAbsolute:
+        x: 1388
+        y: 709
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        dataset_ids:
+        - wgCVTKOew1MVUS8jx5j9Ljn9irA4RHAgVG+eK+rGfqe0aZmPCYhvoiuyDGFdD8u7
+        query_attachment_selector: []
+        query_variable_selector:
+        - '1776648944081'
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: deepseek-chat
+            provider: langgenius/deepseek/deepseek
+        title: 📚知识库-PRD规范检查
+        type: knowledge-retrieval
+      height: 90
+      id: '1776690000001'
+      position:
+        x: 1388
+        y: 893
+      positionAbsolute:
+        x: 1388
+        y: 893
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        dataset_ids:
+        - 6sYJpbuDzfHrGzofq4pYPh12BFI9A+JvPUIDkQqNn498hPsQRUWQxoHxqTCcNYmr
+        query_attachment_selector: []
+        query_variable_selector:
+        - '1776648944081'
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: deepseek-chat
+            provider: langgenius/deepseek/deepseek
+        title: 📚知识库-反馈分类规则
+        type: knowledge-retrieval
+      height: 90
+      id: '1776690000002'
+      position:
+        x: 1388
+        y: 1075
+      positionAbsolute:
+        x: 1388
+        y: 1075
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0.1
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: aefb0922-03b2-4804-9b16-6b450c6b7c51
+          role: system
+          text: |-
+            判断用户输入的类型，输出JSON。
+
+            类型定义：
+            - prd_review_text：用户粘贴了PRD文本/需求描述/功能说明，要求检查风险
+            - prd_review_file：用户上传了文件（PDF/DOCX等长文档），要求PRD检查
+            - data_label_text：用户粘贴了用户反馈/评价/抱怨/差评，要求分类标注
+            - data_label_file：用户上传了包含多条反馈/评论的文件（CSV/JSON/TXT/Excel），要求批量分类
+            - scene_declare：用户声明了行业或产品类型（如"我在做ToC社交APP"）
+            - invalid_input：与产品工作无关的内容（闲聊/天气/知识问答/写诗/空白）
+
+            ⚠️ 文件上传判断规则（最高优先级）：
+            用户上传文件时，根据文件内容和用户意图判断：
+            - 文件中包含多条短文本（用户评论/反馈/评价）+ 用户说"标注/分类/批量" → data_label_file
+            - 文件中包含多条短文本 + 用户没说具体意图 → data_label_file
+            - 文件是PRD/需求文档（结构化的功能描述、模块设计）+ 用户说"检查/评审/看看" → prd_review_file
+            - 文件是PRD/需求文档 + 用户没说具体意图 → prd_review_file
+            - CSV/JSON/TXT格式 + 多行短文本 → 大概率是data_label_file
+            - PDF/DOCX格式 + 长文档 → 大概率是prd_review_file
+
+            边界规则：
+            1. "XX功能太难用了" → data_label_text
+            2. "XX模块支持YY" → prd_review_text
+            3. 短句产品反馈（如"机器人迷路了""电池只能用20分钟"）→ data_label_text
+            4. "我的产品是XX"/"行业是XX" → scene_declare
+            5. "做一款XX APP，核心功能是YY" → prd_review_text
+            6. 单个名词（如"登录"）→ prd_review_text
+            7. 闲聊/天气/知识问答/写诗/空白 → invalid_input
+            8. 判断优先级：有文件→先判断data_label_file还是prd_review_file，再排除invalid_input
+            9. 包含技术术语的需求（如"支持Webhook回调"）→ prd_review_text
+            10. PRD结构句式（如"XX页面：用户输入YY"）→ prd_review_text
+            11. 极短负面词（如"卡""差""烂"）→ data_label_text
+            12. 用户说"批量""标注""分类这些" → data_label_file
+            13. 用户说"检查PRD""看看这份文档" → prd_review_file
+
+            输出格式（只输出JSON，不要其他内容）：
+            {"type":"prd_review_text","confidence":0.95}
+            {"type":"prd_review_file","confidence":0.9}
+            {"type":"data_label_text","confidence":0.95}
+            {"type":"data_label_file","confidence":0.85}
+            {"type":"scene_declare","confidence":0.9}
+            {"type":"invalid_input","confidence":0.9}
+        - id: aefb0922-03b2-4804-9b16-6b450c6b7c52
+          role: user
+          text: '{{#sys.query#}}'
+        selected: false
+        structured_output_enabled: false
+        title: 轻量分类器
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1776665743672'
+      position:
+        x: 342
+        y: 580
+      positionAbsolute:
+        x: 342
+        y: 580
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: |
+          import json
+          import re
+
+          def main(classifier_output: str, user_query: str, has_files: str) -> dict:
+              validated_type = 'invalid_input'
+              confidence = 0.0
+              llm_type = ''
+
+              has_file = False
+              if has_files:
+                  has_files_str = str(has_files).strip()
+                  if has_files_str and has_files_str.lower() not in ['none', 'null', '[]', '{}', 'false', '']:
+                      has_file = True
+
+              prd_intent_kw = ['检查', 'PRD', 'prd', '文档', '需求文档', '产品需求',
+                               '这份', '怎么样', '好不好', '有没有问题', '帮我看看',
+                               '检查一下', '看看这份', '审一下', '评审', '风险',
+                               '审查', '审核', '校验', '规范']
+              label_intent_kw = ['标注', '分类', '这些反馈', '这些评论',
+                                 '这些评价', '帮我标', '帮我分', '全部反馈', '所有反馈',
+                                 '生成报告', '标注报告', '帮我分析这些', '批量分类',
+                                 '批量处理', '批量标注']
+              prd_intent = any(k in user_query for k in prd_intent_kw)
+              label_intent = any(k in user_query for k in label_intent_kw)
+
+              if has_file:
+                  if prd_intent and not label_intent:
+                      return {
+                          'validated_type': 'prd_review_file',
+                          'confidence': 0.95
+                      }
+                  elif label_intent:
+                      return {
+                          'validated_type': 'data_label_file',
+                          'confidence': 0.95
+                      }
+                  elif not user_query.strip():
+                      return {
+                          'validated_type': 'prd_review_file',
+                          'confidence': 0.85
+                      }
+                  else:
+                      return {
+                          'validated_type': 'prd_review_file',
+                          'confidence': 0.8
+                      }
+
+              try:
+                  cleaned = classifier_output.strip()
+                  if cleaned.startswith('```'):
+                      cleaned = cleaned.split('\n', 1)[-1]
+                      cleaned = cleaned.rsplit('```', 1)[0]
+                  cleaned = cleaned.strip()
+
+                  brace_count = 0
+                  start = -1
+                  for i, c in enumerate(cleaned):
+                      if c == '{':
+                          if brace_count == 0:
+                              start = i
+                          brace_count += 1
+                      elif c == '}':
+                          brace_count -= 1
+                          if brace_count == 0 and start >= 0:
+                              data = json.loads(cleaned[start:i+1])
+                              break
+                  else:
+                      data = {}
+
+                  if data:
+                      raw_type = data.get('type', '')
+                      confidence = float(data.get('confidence', 0))
+                      type_map = {
+                          'feedback': 'feedback_classify',
+                          'prd_check': 'prd_check',
+                          'scene_declare': 'scene_declare',
+                          'invalid_input': 'invalid_input',
+                          'batch': 'data_label_file'
+                      }
+                      if raw_type in type_map:
+                          llm_type = type_map[raw_type]
+              except:
+                  pass
+
+              short_negatives = ['卡', '差', '烂', '慢', '崩', '坏', '不好', '不行',
+                                 '难用', '垃圾', '废了', '废', '渣', '坑']
+              if len(user_query.strip()) <= 3 and user_query.strip() in short_negatives:
+                  return {
+                      'validated_type': 'data_label_text',
+                      'confidence': 0.7
+                  }
+
+              prd_structures = [
+                  '模块支持', '模块实现', '需要支持', '需要实现', '需要提供',
+                  '支持多租户', '支持SSO', '支持RBAC', '支持SKU',
+                  '页面：', '功能：', '需求：',
+                  '点击获取', '输入手机号', '验证码.*有效',
+                  '动态变化', '实时展示', '跳转.*页',
+                  '多租户隔离', '单点登录', '权限控制',
+              ]
+              has_prd_structure = False
+              for pattern in prd_structures:
+                  if re.search(pattern, user_query):
+                      has_prd_structure = True
+                      break
+
+              prd_tech_terms = ['Webhook', 'OAuth', 'API', 'CDN', 'Redis', 'SDK',
+                                'Token', '微服务', '回调', '鉴权']
+              has_prd_tech = False
+              for term in prd_tech_terms:
+                  if term in user_query and not any(k in user_query for k in ['闪退', '崩溃', '报错', '不能用', '坏了', '垃圾', '太慢', '卡顿']):
+                      has_prd_tech = True
+                      break
+
+              fb_strong = ['闪退', '崩溃', '卡顿', '垃圾', '太慢', '不好用', '难用',
+                           '不能用', '不工作', '报错', '坏了', '失灵', '太差', '坑',
+                           '无语', '气死', '找不到', '没反应', '不方便', '不实用',
+                           '不如', '还不如', '说好的', '太麻烦', '反人类', '智障',
+                           '差', '烂', '烦死', '恶心', '骗人', '退款', '投诉',
+                           '修了', '赶紧', '什么时候修', '怎么还不', '为什么不能',
+                           '不好', '不行', '好用多了', '竞品', '严重',
+                           '经常失败', '总是失败', '频繁出错', '一直报错']
+              fb_product = ['机器人', '扫地', '充电', '电池', 'APP', '蓝牙', 'WiFi',
+                            '噪音', '吸力', '路径', '建图', '断开', '迷路', '充了',
+                            '会员', '付费', '订阅', '扫地机', '拖地', '避障', '漏扫',
+                            '基站', '水箱', '尘盒', '滤网', '边刷', '滚刷', '地图',
+                            '清扫', '回充', '离线', '固件', '升级失败', '连接失败',
+                            '语音', '摄像头', '门锁', '开关', '灯', '插座', '温控',
+                            '传感器', '报警', '监控', '推送', '通知', '加载', '白屏',
+                            '黑屏', '登录', '注册', '支付', '下单', '搜索', '评论',
+                            '分享', '收藏', '上传', '下载', '播放', '卡住', '死机',
+                            '重启', '耗电', '发热', '闪屏', '花屏', '延迟', '掉线']
+              prd_keywords = ['模块', '需求', 'PRD', '管理', '页面',
+                              '流程', '字段', '概要', '规格', '设计',
+                              '原型', '交互', '用例', '评审', '版本', '迭代',
+                              '里程碑', '排期', '依赖', '前置条件',
+                              '验收标准', '功能描述', '业务逻辑', '状态机']
+              scene_keywords = ['做', '行业', 'ToC', 'ToB', '社交', '电商', '金融',
+                                '教育', '产品是', '方向', '赛道', '垂直', '领域',
+                                '我在做', '我们做', '公司做', '项目是']
+              scene_patterns = ['我们公司做', '我在做', '我们做', '公司做',
+                                '产品是', '项目是', '做.*行业', '做.*方向',
+                                '做.*赛道', '做.*领域', '做.*的$']
+              has_scene_pattern = any(re.search(p, user_query) for p in scene_patterns)
+
+              mild_suggest = ['能不能加', '能不能有', '能不能支持', '能不能优化',
+                              '希望能', '希望有', '希望增加', '希望支持',
+                              '可以加', '可以有', '可以增加', '可以支持',
+                              '建议加', '建议增加', '建议支持', '建议优化',
+                              '想要', '想加', '想要有']
+              has_mild_suggest = any(s in user_query for s in mild_suggest)
+
+              strong_count = sum(1 for k in fb_strong if k in user_query)
+              product_count = sum(1 for k in fb_product if k in user_query)
+              fb_count = strong_count + product_count
+              prd_count = sum(1 for k in prd_keywords if k in user_query)
+              scene_count = sum(1 for k in scene_keywords if k in user_query)
+
+              consult_patterns = ['怎么连接', '如何连接', '怎么配网', '如何配网',
+                                  '怎么使用', '如何使用', '怎么安装', '如何安装',
+                                  '怎么设置', '如何设置', '教程', '说明书',
+                                  '怎么连接WiFi', '如何连接WiFi']
+              is_consult = any(p in user_query for p in consult_patterns)
+
+              if strong_count > 0:
+                  base_type = 'feedback_classify'
+              elif has_scene_pattern and strong_count == 0:
+                  base_type = 'scene_declare'
+              elif has_prd_structure and strong_count == 0:
+                  base_type = 'prd_check'
+              elif has_prd_tech and strong_count == 0:
+                  base_type = 'prd_check'
+              elif has_mild_suggest and strong_count == 0:
+                  base_type = 'feedback_classify'
+              elif fb_count > prd_count and fb_count > scene_count:
+                  base_type = 'feedback_classify'
+              elif prd_count > 0 and prd_count >= fb_count:
+                  base_type = 'prd_check'
+              elif scene_count > 0 and scene_count > prd_count:
+                  base_type = 'scene_declare'
+              elif product_count > 0:
+                  base_type = 'feedback_classify'
+              else:
+                  base_type = 'invalid_input'
+
+              if base_type == 'feedback_classify' and strong_count == 0 and is_consult:
+                  product_func_words = ['WiFi', 'wifi', '蓝牙', '连接', '配网', '登录', '注册',
+                                        '支付', '清扫', '建图', '避障', '充电', '回充',
+                                        'APP', 'app', '固件', '升级', '更新', '门锁',
+                                        '摄像头', '传感器', '指纹', '语音', '网络']
+                  if not any(w in user_query for w in product_func_words):
+                      base_type = 'invalid_input'
+
+              if base_type == 'invalid_input' and llm_type and llm_type != 'invalid_input':
+                  base_type = llm_type
+
+              if base_type == 'prd_check':
+                  validated_type = 'prd_review_text'
+              elif base_type == 'feedback_classify':
+                  validated_type = 'data_label_text'
+              elif base_type == 'scene_declare':
+                  validated_type = 'scene_declare'
+              else:
+                  validated_type = 'invalid_input'
+
+              return {
+                  'validated_type': validated_type,
+                  'confidence': confidence
+              }
+        code_language: python3
+        outputs:
+          confidence:
+            children: null
+            type: number
+          validated_type:
+            children: null
+            type: string
+        selected: false
+        title: 路由验证
+        type: code
+        variables:
+        - value_selector:
+          - '1776665743672'
+          - text
+          value_type: string
+          variable: classifier_output
+        - value_selector:
+          - '1776648944081'
+          - sys.query
+          value_type: string
+          variable: user_query
+        - value_selector:
+          - '1776648944081'
+          - sys.files
+          value_type: string
+          variable: has_files
+      height: 52
+      id: '1776670000001'
+      position:
+        x: 684
+        y: 598
+      positionAbsolute:
+        x: 684
+        y: 598
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: 0e9356ca-6cd8-41ac-b3ee-3586ab510803
+            value: prd_review_file
+            varType: string
+            variable_selector:
+            - '1776670000001'
+            - validated_type
+          id: 'true'
+          logical_operator: and
+        - case_id: dc998848-e72c-408d-88bb-b6b47b160177
+          conditions:
+          - comparison_operator: contains
+            id: 05699103-d149-4f6f-8ade-6d9a0a9dde02
+            value: prd_review_text
+            varType: string
+            variable_selector:
+            - '1776670000001'
+            - validated_type
+          id: dc998848-e72c-408d-88bb-b6b47b160177
+          logical_operator: and
+        - case_id: d1ecb4c7-cb7e-4ec5-82b3-f1b8f583a8a3
+          conditions:
+          - comparison_operator: contains
+            id: e686d121-1af1-459e-84d2-bff99e3fe40e
+            value: data_label_file
+            varType: string
+            variable_selector:
+            - '1776670000001'
+            - validated_type
+          id: d1ecb4c7-cb7e-4ec5-82b3-f1b8f583a8a3
+          logical_operator: and
+        - case_id: 210a059d-f110-410d-a2b1-75d9620efb43
+          conditions:
+          - comparison_operator: contains
+            id: 03520305-fc95-4279-9e5e-018e36373057
+            value: data_label_text
+            varType: string
+            variable_selector:
+            - '1776670000001'
+            - validated_type
+          id: 210a059d-f110-410d-a2b1-75d9620efb43
+          logical_operator: and
+        - case_id: a1b2c3d4-batch-0001-0000-000000000001
+          conditions:
+          - comparison_operator: contains
+            id: b1c2d3e4-batch-0001-0000-000000000001
+            value: scene_declare
+            varType: string
+            variable_selector:
+            - '1776670000001'
+            - validated_type
+          id: a1b2c3d4-batch-0001-0000-000000000001
+          logical_operator: and
+        - case_id: a1b2c3d4-batch-prd-0001-000000000001
+          conditions:
+          - comparison_operator: contains
+            id: b1c2d3e4-batch-prd-0001-000000000001
+            value: invalid_input
+            varType: string
+            variable_selector:
+            - '1776670000001'
+            - validated_type
+          id: a1b2c3d4-batch-prd-0001-000000000001
+          logical_operator: and
+        selected: false
+        title: 条件分支
+        type: if-else
+      height: 508
+      id: '1776665766609'
+      position:
+        x: 1026
+        y: 370
+      positionAbsolute:
+        x: 1026
+        y: 370
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1776690000001'
+          - result
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0.1
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: b3ccb493-890e-48d4-87d4-644af85dfb53
+          role: system
+          text: |-
+            你是 SpecMark，产品规范标记工具。你只做检查和标注，不做生成。
+
+            ## 关键认知（必须遵守）
+            场景错配P1仅适用于ToB专属业务术语（多租户/SSO/RBAC/审批流/部门管理/组织架构/角色权限）。以下技术实现术语不是ToB专属术语，绝对不可判为场景错配🔴高，必须标注为⚠️未收录术语🟡中：Webhook、OAuth2.0、API、CDN、Redis、MySQL、微服务、Token、SDK、REST、GraphQL、WebSocket
+
+            ## 当前场景
+            行业/产品类型：{{#conversation.scene#}}
+            读者类型：{{#conversation.reader_type#}}
+
+            ## 检查维度（按优先级从高到低输出）
+            | 优先级 | 维度 | 判定标准 |
+            |--------|------|----------|
+            | P1 | 场景错配 | ToC产品出现ToB专属术语（多租户/SSO/RBAC/审批流/部门管理/组织架构/角色权限等）。注意：Webhook/OAuth2.0/API/CDN等技术实现术语不属于ToB专属术语，应标注为未收录术语⚠️🟡中 |
+            | P1 | 埋点违规 | 一个行为一个事件，未用通用事件+动态参数模式 |
+            | P2 | 数据无来源 | 数据类内容未标注出处 |
+            | P3 | 缺少异常处理 | 只写了正常流程，未考虑异常分支 |
+            | P4 | 验收标准模糊 | 「功能正常运行」「体验流畅」等模糊表述 |
+            | P5 | 需求不可量化 | 「提升用户体验」「优化性能」无量化指标 |
+
+            ## 输出格式（逐项输出，有风险才列出）
+            【风险点】：[具体问题]
+            【位置】：[引用原文片段，超过50字用…截断]
+            【风险等级】：🔴高 / 🟡中 / 🟢低
+            【修改建议】：[关键词或短语，不超过15字]
+            【行业参考】：[知识库中有则输出，无则省略此行]
+
+            ## 输出规则
+            - 若多个风险指向同一处，合并为一条，等级取最高
+            - 遇到未收录术语（不在黑名单中但属于技术术语，如Webhook/OAuth2.0/API/CDN等），标注「⚠️ 该术语未收录，请人工确认」，等级🟡中。不要将灰名单术语直接归入场景错配🔴高
+            - 灰名单术语（技术实现术语，不可判为场景错配🔴高）：Webhook、OAuth2.0、API、CDN、Redis、MySQL、微服务、Token、SDK。这些术语属于技术实现层面，在PRD技术架构描述中出现是合理的，应标注为⚠️未收录术语🟡中
+            - 若无风险，输出：✅ 未检测到规范风险
+            - 短PRD/草稿片段（少于3句话或仅描述正常流程）必须逐维度检查P1-P5，不可因文档简短而只报1项风险。典型短PRD应同时检出P3缺少异常处理和P4验收标准模糊
+            - 需求概要/一句话PRD（如"核心功能是匿名提问"）也必须逐维度检查，至少检查P1场景错配、P3缺少异常处理、P4验收标准模糊、P5需求不可量化。"核心功能是XX"这种描述缺少验收标准和量化指标，必须检出P4和P5
+            - 需求备注（仅目标/指标，无功能描述，如"日活提升30%"）至少检查P1场景错配和P5需求不可量化，其余维度标注「文档不完整，建议补充后检查」
+            - 短PRD逐维度检查示例： 输入"用户登录功能：输入手机号和验证码即可登录。" 应检出：P3缺少异常处理🟡中 + P4验收标准模糊🟡中（"即可登录"无量化验收条件）
+            - 灰名单术语检查示例： 输入"我们需要支持Webhook回调以及OAuth2.0鉴权。" 应检出：⚠️ 该术语未收录，请人工确认 🟡中（Webhook和OAuth2.0是技术实现术语，不是ToB专属业务术语，不可判为场景错配🔴高） 错误输出：场景错配🔴高（这是错误的！Webhook/OAuth2.0不是ToB专属术语）
+
+            ## 知识库参考
+            以下知识库内容已自动注入上下文，请参考相关规则进行检查。
+
+            ## 禁止事项
+            - 禁止替用户重写PRD
+            - 禁止提供完整修改版
+            - 禁止追问「是否需要展开」
+
+            ## 读者确认
+            如果当前读者类型为空或"产品"（默认值），请在输出开头添加提醒：
+            💡 提示：您尚未声明行业和读者类型，声明后可获得更精准的审查视角。请告诉我您的行业和目标读者（如：电商行业，给开发看）
+
+            如果读者类型已明确指定（非默认"产品"），则不添加此提醒。
+        selected: false
+        structured_output_enabled: false
+        title: PRD风险检查
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1776665833871'
+      position:
+        x: 1730
+        y: 894
+      positionAbsolute:
+        x: 1730
+        y: 894
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: |
+          import re
+          from collections import Counter
+
+          def main(llm_output: str) -> dict:
+              try:
+                  if not llm_output or not str(llm_output).strip():
+                      return {
+                          'output': '⚠️ 未获取到检查结果，请重新提交。'
+                      }
+
+                  llm_output = str(llm_output)
+
+                  if '📋 Jira任务格式' in llm_output or 'Jira任务格式' in llm_output:
+                      return {
+                          'output': llm_output
+                      }
+
+                  if '✅ 未检测到规范风险' in llm_output:
+                      return {
+                          'output': llm_output
+                      }
+
+                  risk_pattern = r'【风险点】：(.+?)\n【位置】：(.+?)\n【风险等级】：(.+?)\n【修改建议】：(.+?)$'
+                  risks = re.findall(risk_pattern, llm_output, re.MULTILINE)
+
+                  if not risks:
+                      return {
+                          'output': llm_output + '\n\n📋 Jira任务格式：\n（未检测到标准格式风险点，请人工复核）'
+                      }
+
+                  risk_type_keywords = {
+                      '场景错配': ['场景错配', 'ToB专属', '多租户', 'SSO', 'RBAC'],
+                      '埋点违规': ['埋点'],
+                      '数据无来源': ['数据无来源', '数据来源', '出处'],
+                      '缺少异常处理': ['异常处理', '异常分支', '异常情况'],
+                      '验收标准模糊': ['验收标准', '验收条件'],
+                      '需求不可量化': ['不可量化', '量化指标'],
+                  }
+
+                  current_types = []
+                  for risk in risks:
+                      risk_point = risk[0].strip()
+                      matched = False
+                      for type_name, keywords in risk_type_keywords.items():
+                          if any(k in risk_point for k in keywords):
+                              current_types.append(type_name)
+                              matched = True
+                              break
+                      if not matched:
+                          current_types.append(risk_point[:8])
+
+                  jira_lines = []
+                  for risk in risks:
+                      risk_point = risk[0].strip()
+                      level_raw = risk[2].strip()
+                      position = risk[1].strip()
+                      suggestion = risk[3].strip()
+                      if '🔴' in level_raw or '高' in level_raw:
+                          priority = 'High'
+                      elif '🟡' in level_raw or '中' in level_raw:
+                          priority = 'Medium'
+                      else:
+                          priority = 'Low'
+                      jira_lines.append(f"【Bug】PRD风险：{risk_point} | 优先级：{priority} | 描述：{position} {suggestion}")
+
+                  jira_section = ''
+                  if jira_lines:
+                      jira_section = '\n📋 Jira任务格式：\n' + '\n'.join(jira_lines)
+
+                  summary_section = ''
+                  if len(current_types) >= 2:
+                      type_counts = Counter(current_types)
+                      most_common = type_counts.most_common(1)[0]
+                      if most_common[1] >= 2:
+                          summary_section = f'\n\n📊 本次检查最高频风险：{most_common[0]} （出现{most_common[1]}次）。建议重点关注{most_common[0]}问题。'
+
+                  final_output = llm_output + jira_section + summary_section
+
+                  return {
+                      'output': final_output
+                  }
+              except Exception as e:
+                  return {
+                      'output': f'⚠️ 结果处理异常，原始输出如下：\n\n{llm_output if llm_output else "（无输出）"}'
+                  }
+        code_language: python3
+        outputs:
+          output:
+            children: null
+            type: string
+        selected: false
+        title: 风险计数与Jira格式
+        type: code
+        variables:
+        - value_selector:
+          - '1776665833871'
+          - text
+          value_type: string
+          variable: llm_output
+      height: 52
+      id: '1776668636204'
+      position:
+        x: 2072
+        y: 912
+      positionAbsolute:
+        x: 2072
+        y: 912
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1776668636204.output#}}'
+        selected: false
+        title: PRD检查结果
+        type: answer
+        variables: []
+      height: 103
+      id: '1776668650000'
+      position:
+        x: 2434
+        y: 885
+      positionAbsolute:
+        x: 2434
+        y: 885
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1776690000002'
+          - result
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0.1
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: 9bc050a8-3531-4e45-b61b-732f4ffcc462
+          role: system
+          text: |-
+            你是 SpecMark 反馈分类器。对每条用户反馈，直接输出分类结果。
+            ## 当前场景 行业/产品类型：{{#conversation.scene#}}
+            ## 分类维度
+            1. 情绪：负向 / 中性 / 正向 2. 问题类型：功能 / 性能 / 体验 / 内容 3. 优先级：高 / 中 / 低
+            ## ⭐ 黄金判定口诀（背下来！）
+            软件坏了 → 功能 | 软件能用但慢/卡 → 性能 | 软件能用但不好用/服务差 → 体验 | 算法推荐不准 → 内容
+            ## 核心规则（必须遵守）
+            ### 规则1：建议类一律→体验+低 "能不能加个XX""希望增加XX""建议加XX"→体验/低（即使提到"功能"二字）
+            ### 规则2：软件坏了→功能（最高优先级判断！） 闪退/崩溃/白屏/打不开/按钮没反应/数据丢失/支付扣钱但订单没生成/登录不上/验证码收不到/连接失败/保存失败→功能+高
+            ### 规则3：⚠️ 服务/配送/商家/客服问题→体验（最容易误判的区域！） 配送超时/慢/凉/洒 → 体验（软件没坏，是配送服务差） 骑手态度恶劣/扔餐/提前确认送达 → 体验（骑手行为≠软件bug） 商家取消订单/不承认问题 → 体验（商家行为≠软件故障） 食物有异物/变质/不新鲜 → 体验（食品质量≠软件bug） 客服不管/推诿/模板回复/不解决 → 体验（服务质量=体验维度） 退款慢/售后慢/等很久没人处理 → 体验（等待时间=体验） 在线问诊医生回复慢 → 体验（医疗服务等待≠软件加载慢）
+            ### 规则4：性能指标→性能 卡/卡顿/慢/耗电/发热/掉帧/延迟/缓冲长/包太大→性能（能用但不达标）
+            ### 规则5：算法输出质量→内容 推荐不准/搜索不对/匹配不公平/翻译错/图文不符/假货→内容
+            ### 规则6：价格/广告/操作复杂→体验 太贵/贵了/涨价/广告太多/推送骚扰/操作复杂/找不到入口/界面丑→体验
+            ### 规则7：正向反馈按维度分 夸速度/顺畅→性能/低 | 夸功能可用→功能/低 | 夸推荐/社区→内容/低 | 夸操作/配送→体验/低
+            ### 规则8：优先级规则 高优触发：闪退崩溃数据丢失支付失败安全漏洞 + 等超久骑手恶劣被自动续费食品安全 + 付费用户+任何问题 + 反讽+问题 缓解词降级：偶尔/有时/不影响使用/还行/可接受→降一级（但闪退/崩溃/数据丢失/支付失败/食品安全/被欺骗不降级）
+            ## Few-shot示例（必须参考）
+            输入："充了会员还是闪退，太垃圾了" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.95,"reasoning":"付费+核心功能失效+强烈负面"}
+            输入："能不能加个记账功能？" 输出：{"sentiment":"中性","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"建议类一律体验，即使提到功能二字"}
+            输入："能不能增加按价格排序的功能？" 输出：{"sentiment":"中性","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"建议类一律体验"}
+            输入："希望增加深色模式" 输出：{"sentiment":"中性","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"建议类一律体验"}
+            输入："推荐越来越不准了" 输出：{"sentiment":"负向","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"趋势性恶化，推荐是内容维度"}
+            输入："充值到账很快" 输出：{"sentiment":"正向","problem_type":"功能","priority":"低","confidence":0.9,"reasoning":"正向夸功能→功能"}
+            输入："音质很棒，值得付费" 输出：{"sentiment":"正向","problem_type":"性能","priority":"低","confidence":0.9,"reasoning":"正向夸音质→性能"}
+            输入："推荐算法不错，总能找到想要的" 输出：{"sentiment":"正向","problem_type":"内容","priority":"低","confidence":0.85,"reasoning":"正向夸推荐→内容"}
+            输入："退款到账很快" 输出：{"sentiment":"正向","problem_type":"功能","priority":"低","confidence":0.9,"reasoning":"正向夸功能→功能"}
+            输入："视频通话画质很清晰" 输出：{"sentiment":"正向","problem_type":"性能","priority":"低","confidence":0.9,"reasoning":"正向夸画质→性能"}
+            输入："社区氛围很好" 输出：{"sentiment":"正向","problem_type":"内容","priority":"低","confidence":0.9,"reasoning":"正向夸社区→内容"}
+            输入："滴滴打车等了20分钟没人接单" 输出：{"sentiment":"负向","problem_type":"体验","priority":"高","confidence":0.9,"reasoning":"等超长时间=严重影响"}
+            输入："骑手态度恶劣，直接把餐扔门口" 输出：{"sentiment":"负向","problem_type":"体验","priority":"高","confidence":0.95,"reasoning":"骑手恶劣=严重影响"}
+            输入："被自动续费了，完全没提醒" 输出：{"sentiment":"负向","problem_type":"体验","priority":"高","confidence":0.9,"reasoning":"被欺骗=严重影响"}
+            输入："真厉害，更新之后更卡了" 输出：{"sentiment":"负向","problem_type":"性能","priority":"高","confidence":0.95,"reasoning":"反讽+问题"}
+            输入："买了VIP推荐还是一样的差" 输出：{"sentiment":"负向","problem_type":"内容","priority":"高","confidence":0.9,"reasoning":"付费用户+问题"}
+            输入："发烫严重，不敢用了" 输出：{"sentiment":"负向","problem_type":"性能","priority":"高","confidence":0.9,"reasoning":"严重影响=不敢用"}
+            输入："偶尔会闪退" 输出：{"sentiment":"负向","problem_type":"功能","priority":"中","confidence":0.85,"reasoning":"有缓解词但闪退不降级"}
+            输入："定位不准，司机找不到我" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.9,"reasoning":"定位功能失效"}
+            输入："淘宝商品详情页图片显示不出来" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.9,"reasoning":"显示功能失效"}
+            输入："支付宝安全验证太麻烦了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"验证能用但体验差"}
+            输入："界面简洁好用，上手很快" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"正向夸操作→体验"}
+            输入："网易课堂字幕翻译有错误" 输出：{"sentiment":"负向","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"内容错误"}
+            输入："费用计算不透明" 输出：{"sentiment":"负向","problem_type":"内容","priority":"高","confidence":0.85,"reasoning":"信息不透明=严重影响"}
+            输入："一直加载转圈，根本打不开" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.95,"reasoning":"加载功能失效，打不开=功能坏"}
+            输入："总是掉线，根本没法用" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.95,"reasoning":"连接功能失效"}
+            输入："语音转文字准确率太低" 输出：{"sentiment":"负向","problem_type":"功能","priority":"中","confidence":0.85,"reasoning":"功能结果错误但非崩溃"}
+            输入："会员太贵了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"价格/费用→体验"}
+            输入："配送费太贵了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"价格/费用→体验"}
+            输入："皮肤价格越来越贵" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"价格/费用→体验"}
+            输入："搜索结果跟关键词完全不匹配" 输出：{"sentiment":"负向","problem_type":"内容","priority":"高","confidence":0.9,"reasoning":"搜索算法输出=内容"}
+            输入："匹配机制不公平" 输出：{"sentiment":"负向","problem_type":"内容","priority":"高","confidence":0.9,"reasoning":"匹配算法输出=内容"}
+            输入："朋友圈广告太多了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"低","confidence":0.85,"reasoning":"广告多=体验差"}
+            输入："建议优化搜索算法" 输出：{"sentiment":"中性","problem_type":"内容","priority":"低","confidence":0.85,"reasoning":"建议优化算法→内容"}
+            输入："滤镜效果很好看" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"夸效果→体验"}
+            输入："多端同步很顺畅" 输出：{"sentiment":"正向","problem_type":"性能","priority":"低","confidence":0.9,"reasoning":"夸顺畅→性能"}
+            输入："分类很详细，容易找到" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"容易找到=操作体验"}
+            输入："配送速度快，餐还是热的" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"夸配送→体验"}
+            输入："更新包太大了" 输出：{"sentiment":"负向","problem_type":"性能","priority":"低","confidence":0.85,"reasoning":"包大小=性能指标"}
+            输入："等了2小时才送到，外卖都凉了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"高","confidence":0.9,"reasoning":"配送服务差=体验，软件没坏"}
+            输入："商家接单了又取消订单" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"商家行为=体验，软件没坏"}
+            输入："食物里吃出头发，客服不管" 输出：{"sentiment":"负向","problem_type":"体验","priority":"高","confidence":0.9,"reasoning":"客服服务差=体验，软件没坏"}
+            输入："支付扣了钱但订单没生成" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.95,"reasoning":"支付功能真的坏了"}
+            输入："安全验证太麻烦了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"验证能用但麻烦=体验中"}
+            输入："歌词和歌曲不同步" 输出：{"sentiment":"负向","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"歌词同步=内容匹配"}
+            输入："偶尔有点噪音，但整体还行" 输出：{"sentiment":"中性","problem_type":"体验","priority":"低","confidence":0.8,"reasoning":"有缓解词+还行=中性"}
+            输入："加载慢一点，不过可以接受" 输出：{"sentiment":"中性","problem_type":"性能","priority":"低","confidence":0.8,"reasoning":"有缓解词+可接受=中性"}
+            输入："内容参差不齐，有的好有的差" 输出：{"sentiment":"中性","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"中性+内容=中"}
+            输入："搜索结果全是翻唱" 输出：{"sentiment":"负向","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"搜索质量=内容"}
+            输入："退款成功了，客服处理很快" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"夸客服=体验"}
+            输入："评论区审核太严，正常评论被删" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.9,"reasoning":"删评=功能行为+高"}
+            输入："举报系统形同虚设" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.9,"reasoning":"举报功能失效=高"}
+            输入："理财页面数据更新不及时" 输出：{"sentiment":"负向","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"数据更新=内容维度"}
+            输入："视频保存到本地失败" 输出：{"sentiment":"负向","problem_type":"功能","priority":"中","confidence":0.85,"reasoning":"保存失败非核心=中"}
+            输入："发送文件大小限制太小了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"限制=体验中"}
+            输入："基金收益计算方式看不懂" 输出：{"sentiment":"负向","problem_type":"内容","priority":"低","confidence":0.8,"reasoning":"看不懂非错误=低"}
+            输入："广告太多，刷5个有2个广告" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"广告多=体验中"}
+            输入："突然切歌了" 输出：{"sentiment":"负向","problem_type":"功能","priority":"中","confidence":0.85,"reasoning":"切歌非核心功能=中"}
+            输入："界面设计还行，就是操作有点复杂" 输出：{"sentiment":"负向","problem_type":"体验","priority":"低","confidence":0.8,"reasoning":"操作复杂=负向但轻微=低"}
+            输入："安全措施很到位" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"夸安全措施→体验"}
+            输入："日程功能很方便" 输出：{"sentiment":"正向","problem_type":"功能","priority":"低","confidence":0.9,"reasoning":"正向夸功能→功能"}
+            输入："举报了没处理" 输出：{"sentiment":"负向","problem_type":"功能","priority":"中","confidence":0.85,"reasoning":"举报功能失效"}
+            ## 输出格式（只输出JSON）
+            { "sentiment": "负向/中性/正向", "problem_type": "功能/性能/体验/内容", "priority": "高/中/低", "confidence": 0.0到1.0的置信度, "reasoning": "简要判断依据，不超过30字" }
+        selected: false
+        structured_output_enabled: false
+        title: 反馈特征提取
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1776665889997'
+      position:
+        x: 1730
+        y: 1076
+      positionAbsolute:
+        x: 1730
+        y: 1076
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: |
+          import json
+          import re
+
+          def main(feature_json: str, original_query:str, current_scene: str) -> dict:
+              text = str(original_query).strip()
+              if not text:
+                  return {'output': '⚠️ 输入为空', 'problem_type':'体验', 'sentiment': '中性', 'priority': '低', 'user_tags': '', 'implicit_need':'无', 'is_core': False}
+
+              SCENE_CORE_MAP = {
+                  '电商': '搜索,购物车,下单,支付,退款,物流,评价,客服,商品,订单,优惠券,价格,会员,售后,发货,退货',
+                  '社交': '聊天,消息,好友,动态,评论,点赞,分享,群,朋友圈,私信,语音,视频,关注,粉丝,账号,登录',
+                  '金融': '转账,支付,余额,账单,还款,借款,理财,基金,股票,保险,信用,风控,银行卡,充值,提现',
+                  '教育':'课程,学习,作业,考试,成绩,老师,学生,班级,直播,录播,题库,练习,笔记,进度,证书',
+                  '外卖': '下单,配送,骑手,商家,餐品,订单,支付,退款,评价,客服,优惠券,红包,会员,地址',
+                  '出行': '打车,司机,路线,导航,地图,定位,行程,费用,支付,评价,客服,投诉,安全,紧急,拼车',
+                  '游戏': '登录,匹配,对战,充值,皮肤,英雄,角色,装备,技能,地图,服务器,延迟,卡顿,闪退,崩溃',
+                  '办公':'文档,表格,演示,协作,会议,日历,邮件,通讯录,审批,流程,项目,任务,日程,笔记,云盘',
+                  '医疗': '问诊,医生,处方,药品,挂号,预约,检查,报告,医保,支付,退款,评价,客服,投诉,推荐',
+                  '智能硬件': 'WiFi,蓝牙,配网,连接,固件,升级,地图,清扫,充电,回充,避障,吸力,噪音,续航,电池',
+                  '音乐': '播放,歌曲,歌单,搜索,推荐,下载,收藏,分享,歌词,音质,会员,付费,免费,广告,推送',
+              }
+
+              def detect_scene(text):
+                  best = ''
+                  best_score = 0
+                  for key, funcs in SCENE_CORE_MAP.items():
+                      kws = funcs.split(',')
+                      score = sum(1 for k in kws if k in text)
+                      if score> best_score:
+                          best_score = score
+                          best= key
+                  return best if best_score >= 1 else ''
+
+              scene = str(current_scene).strip()
+              if scene in ['未指定', '', 'None']:
+                  scene = detect_scene(text)
+              def is_core_func(text, scene):
+                  if scene and scene in SCENE_CORE_MAP:
+                      return any(k in text for k in SCENE_CORE_MAP[scene].split(','))
+                  return False
+
+              def extract_tags(text):
+                  tags = []
+                  if re.search(r'(会员|VIP|充值|付费|订阅|充了|花钱)', text):
+                      tags.append('付费用户')
+                  if re.search(r'(刚买|刚注册|第一次用|新手)', text):
+                      tags.append('新用户')
+                  if re.search(r'(用了.*月|用了.*年|老用户|用了很久)', text):
+                      tags.append('老用户')
+                  return tags
+
+              def extract_need(text):
+                  mappings =[
+                      (r'每次都要(.{2,6})', '自动化'),
+                      (r'找不到(.{2,6})','入口优化'),
+                      (r'太麻烦了|太复杂', '流程简化'),
+                      (r'能不能(加个|增加|支持)(.{2,8})',None),
+                      (r'希望(增加|支持|有)(.{2,8})', None),
+                      (r'噪音太大|太吵','静音模式'),
+                      (r'充电太慢|充电.*慢', '快充'),
+                      (r'总是断连|断连','连接稳定性'),
+                      (r'没有(.{2,6})模式', None),
+                  ]
+                  for pattern, need in mappings:
+                      m = re.search(pattern, text)
+                      if m:
+                          if need:
+                              return need
+                          groups = m.groups()
+                          if len(groups)>= 2 and groups[-1]:
+                              return groups[-1][:12]
+                          elif len(groups) >= 1 and groups[0]:
+                              return groups[0][:12]
+                  return '无'
+
+              core = is_core_func(text,scene)
+              tags = extract_tags(text)
+              need = extract_need(text)
+              def iron_classify(text):
+                  # iron_classify v1.0 2026-05
+                  # Priority rules aligned with knowledge base priority matrix
+                  func_high_kw = r'闪退|崩溃|死机|白屏|黑屏|变砖|支付失败|数据丢失|登录不上|账号被盗|隐私泄露'
+                  svc_high_kw = r'食品安全|异物|变质|寄生虫|吃出|拉肚子|食物中毒|发霉|馊了|臭了|不新鲜|拒赔|骑手态度|司机态度|等超久|自动续费|被欺骗|等了\d+分钟|等了\d+小时|没人接单|没接单|骚扰|威胁'
+                  perf_high_kw = r'发烫|不敢用|完全卡死|卡死'
+                  content_high_kw = r'虚假宣传|诈骗|假货|杀熟|刷.{0,1}评|假评|水军'
+                  irony_pos = ['太棒了', '绝了', '真厉害', '厉害了', '完美']
+                  irony_neg = ['闪退', '崩溃', '死机']
+                  if any(k in text for k in irony_pos) and any(k in text for k in irony_neg):
+                      return ('功能', '负向', '高')
+                  neg_ctx = ['但', '但是', '不过', '就是', '可惜', '然而', '只是', '可是', '虽然',
+                             '差评', '问题', '气愤', '威胁', '刷', '假', '骗', '坑', '垃圾', '太差',
+                             '不满', '投诉', '拒', '不解决', '不管']
+                  pos_words = ['很好', '好用', '专业', '不错', '很棒', '超好用',
+                               '体验很好', '给力', '真香', '效率提高', '帮助提高', '支持导出',
+                               '覆盖广', '很全', '很细', '很准', '很及时', '很方便', '很酷',
+                               '很震撼', '很到位', '准时送达', '好评']
+                  if any(k in text for k in pos_words):
+                      if not any(n in text for n in neg_ctx):
+                          return ('体验', '正向', '低')
+                  fixed_signals = ['修好了', '已解决', '已修复', '终于不', '终于没', '恢复正常',
+                                   '不再闪退', '不再崩溃', '不再报错']
+                  if any(k in text for k in fixed_signals):
+                      return None
+                  if re.search(r'能不能|希望|建议|想要|加个|能不能加', text):
+                      return ('体验', '中性', '低')
+                  true_crash = bool(re.search(
+                      r'闪退|崩溃|死机|白屏|黑屏|变砖|强制退出|ANR|'
+                      r'支付失败|扣款异常|重复扣款|数据丢失|登录不上|账号被盗|'
+                      r'隐私泄露|隐私暴露|不明扣款|'
+                      r'打不开|一片空白|404|'
+                      r'同步失败|数据异常|金额算错|乱码|订单消失|记录没了|聊天记录没了|'
+                      r'验证码收不到|注册失败|'
+                      r'被盗|被封|被限流|被禁言|被锁|封禁|风控|拦截|'
+                      r'没到账|不到账|钱没到|扣了钱|订单没生成|多扣|金额不对|账单不对|'
+                      r'账户限制|账户冻结|限制转账|限制提现|'
+                      r'没声音|播放不了|播放没声音|'
+                      r'恢复不了|恢复失败|'
+                      r'数据不同步|状态不同步|信息不同步|'
+                      r'升级失败|识别不了',
+                      text
+                  ))
+                  broad_func_failure = bool(re.search(
+                      r'闪退|崩溃|死机|白屏|黑屏|变砖|强制退出|ANR|'
+                      r'支付失败|扣款异常|重复扣款|数据丢失|登录不上|账号被盗|'
+                      r'隐私泄露|隐私暴露|不明扣款|'
+                      r'打不开|一片空白|404|'
+                      r'功能失效|没反应|报错|'
+                      r'上传失败|下载失败|保存失败|同步失败|'
+                      r'不能用|没法用|用不了|无响应|失效|失灵|'
+                      r'保存不了|传不了|下不了|载不出|'
+                      r'掉线|断连|无法连接|连不上|连接失败|断开|'
+                      r'验证码收不到|注册失败|'
+                      r'被盗|被封|被限流|被禁言|'
+                      r'数据异常|金额算错|乱码|订单消失|记录没了|聊天记录没了|'
+                      r'卡死无法|卡死不能|无法跳转|形同虚设|绕过|绕开|'
+                      r'被锁|锁了|封禁|解封|申诉|风控|拦截|'
+                      r'没到账|不到账|钱没到|扣了钱|订单没生成|'
+                      r'多扣|金额不对|账单不对|'
+                      r'没声音|播放不了|播放没声音|没声|'
+                      r'识别不通过|识别失败|'
+                      r'恢复不了|没恢复|恢复失败|'
+                      r'定位.{0,2}飘|定位.{0,2}偏|定位不准|定位偏差|'
+                      r'不见了|消失|丢失|'
+                      r'被举报|限制转账|限制提现|账户限制|账户冻结|'
+                      r'不工作|不运行|无法使用|不可用|'
+                      r'扣了.{0,4}费|扣了.{0,4}钱|'
+                      r'找不到了|显示空白|收藏夹空白|'
+                      r'数据不同步|状态不同步|信息不同步|'
+                      r'不执行|不生效|功能缺失|'
+                      r'识别率低|成功率太低|'
+                      r'误报|漏发|卡粮|'
+                      r'上不了网|'
+                      r'突然没了|突然.{0,2}没|'
+                      r'离线频繁|频繁.*掉线|'
+                      r'格式不对|出粮不均匀|'
+                      r'识别不了|不认了|'
+                      r'不支持|做不到|不能自定义|'
+                      r'识别不准|识别率太低|准确率太低|'
+                      r'升级失败|变砖',
+                      text
+                  ))
+                  pure_svc = ['骑手', '配送', '商家', '餐品', '食物', '外卖', '快递', '驿站', '快递柜', '包裹', '取件码', '送餐']
+                  has_pure_svc = any(k in text for k in pure_svc)
+                  ambig_svc = ['退款', '售后', '客服', '退货', '换货', '拒赔', '投诉', '举报', '物流', '发货', '报修', '物业', '保洁']
+                  has_ambig_svc = any(k in text for k in ambig_svc)
+                  has_driver = '司机' in text
+                  if has_pure_svc and broad_func_failure:
+                      if re.search(r'定位.{0,2}飘|定位.{0,2}偏|定位不准|定位偏差', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_pure_svc and not broad_func_failure:
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_driver and broad_func_failure:
+                      if re.search(r'扣了|扣费|取消费|扣款|多扣|不到账|没到账', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      if re.search(r'定位.{0,2}飘|定位.{0,2}偏|定位不准|定位偏差', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_driver and not broad_func_failure:
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_ambig_svc and true_crash:
+                      p = '高' if re.search(func_high_kw, text) else '中'
+                      return ('功能', '负向', p)
+                  if has_ambig_svc and broad_func_failure:
+                      strong_func_signals = bool(re.search(
+                          r'扣了钱|订单没生成|没到账|不到账|钱没到|多扣|金额不对|账单不对|'
+                          r'格式不对|变砖|升级失败|'
+                          r'数据异常|金额算错|乱码|订单消失|记录没了|'
+                          r'被锁|封禁|风控|拦截|账户限制|账户冻结|'
+                          r'打不开|一片空白|404|'
+                          r'识别不了|识别不通过',
+                          text
+                      ))
+                      if strong_func_signals:
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      return ('体验', '负向', '低')
+                  if broad_func_failure:
+                      has_perf = bool(re.search(
+                          r'卡顿|太卡了|很卡|变卡|不流畅|卡得|卡的要死|卡死了|卡的要命|'
+                          r'加载慢|启动慢|打开慢|响应慢|运行慢|'
+                          r'延迟高|网络延迟|高延迟|延迟太大|延迟严重|'
+                          r'耗电|费电|掉电快|发烫|过热|'
+                          r'掉帧|帧率低|不跟手|画面不流畅|'
+                          r'缓冲|转圈圈|一直转圈|loading|缓冲中|'
+                          r'占用高|内存高|资源占用|CPU高|'
+                          r'画面延迟|声音延迟|画面不同步|声音不同步',
+                          text
+                      ))
+                      if has_perf:
+                          if re.search(r'太慢.*用不了|用不了.*太慢|等\d+秒.*用不了|用不了.*等', text):
+                              p = '高' if re.search(perf_high_kw, text) else '中'
+                              return ('性能', '负向', p)
+                      p = '高' if re.search(func_high_kw, text) else '中'
+                      return ('功能', '负向', p)
+                  if re.search(r'(?:太|很|特别|变|更|越|也|都|还是|就是).*卡|卡(?:顿|住|得|的|了)', text):
+                      if not re.search(r'银行卡|打卡|会员卡|卡通|卡片|卡包', text):
+                          p = '高' if re.search(perf_high_kw, text) else '中'
+                          return ('性能', '负向', p)
+                  if re.search(r'(?:太|很|特别|更|越).*慢|慢(?:了|得|的)', text):
+                      if not re.search(r'回复.*慢|问诊|医生|客服.*慢|退款|售后|审核|物流|发货|配送', text):
+                          p = '高' if re.search(perf_high_kw, text) else '中'
+                          return ('性能', '负向', p)
+                  if re.search(r'启动.{0,3}\d+秒|启动要|打开要', text):
+                      return ('性能', '负向', '中')
+                  if '续航' in text:
+                      return ('性能', '负向', '中')
+                  if '假死' in text:
+                      return ('性能', '负向', '高')
+                  if '限速' in text:
+                      return ('性能', '负向', '中')
+                  if re.search(r'(?:资源|内存|CPU).*(?:占用|高|大|太多)', text):
+                      return ('性能', '负向', '中')
+                  if re.search(r'转.{0,3}圈', text):
+                      if not re.search(r'朋友圈|社交圈', text):
+                          return ('性能', '负向', '中')
+                  if re.search(r'手机.{0,3}烫|烫.{0,3}手', text):
+                      return ('性能', '负向', '高')
+                  if re.search(r'延迟.{0,4}(?:大|严重|高|太多)', text):
+                      if not re.search(r'数据.*延迟|汇率.*延迟|牌价.*延迟', text):
+                          return ('性能', '负向', '中')
+                  if re.search(r'不同步', text):
+                      if re.search(r'数据|状态|信息|订单|库存|记录', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      if not re.search(r'字幕|歌词|翻译', text):
+                          return ('性能', '负向', '中')
+                  has_content_issue = bool(re.search(
+                      r'图文不符|描述不符|实物不符|货不对板|缺斤少两|'
+                      r'虚假宣传|夸大宣传|误导|标称|标示|'
+                      r'推荐不准|推荐不好|搜索不对|搜不到|搜出来不对|'
+                      r'匹配不公|匹配机制|算法有问题|'
+                      r'翻译错|字幕不同步|歌词延迟|歌词翻译不对|'
+                      r'内容过时|信息旧|攻略过时|信息过时|'
+                      r'数据有延迟|数据延迟|不准确|算错|'
+                      r'答案有错|题库.*错|'
+                      r'对不上|不准确',
+                      text
+                  ))
+                  if has_content_issue:
+                      p = '高' if re.search(content_high_kw, text) else '低'
+                      return ('内容', '负向', p)
+                  if re.search(r'数据.{0,2}延迟|汇率.*延迟|牌价.*延迟', text):
+                      return ('内容', '负向', '低')
+                  if '描述不符' in text or '实物不符' in text or '缺斤少两' in text:
+                      p = '高' if re.search(content_high_kw, text) else '低'
+                      return ('内容', '负向', p)
+                  if re.search(r'刷.{0,1}评|假评|水军|五星好评', text):
+                      return ('内容', '负向', '高')
+                  if re.search(r'信息过时|早就关门|攻略.*过时', text):
+                      return ('内容', '负向', '低')
+                  if re.search(r'材质.*不符|手感.*不一样', text):
+                      return ('内容', '负向', '低')
+                  if '杀熟' in text:
+                      return ('体验', '负向', '高')
+                  if re.search(r'关不掉|取消不了|停不了', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'审核不通过|审核.*拒绝', text):
+                      if re.search(r'流程|繁琐', text):
+                          return ('体验', '负向', '低')
+                      return ('功能', '负向', '中')
+                  if re.search(r'不能用|用不了|没法用', text):
+                      if re.search(r'更新|升级', text):
+                          return ('体验', '负向', '低')
+                      p = '高' if re.search(func_high_kw, text) else '中'
+                      return ('功能', '负向', p)
+                  if re.search(r'对不上', text):
+                      if re.search(r'数据|报表|销售额|财务|账', text):
+                          return ('内容', '负向', '低')
+                      return ('功能', '负向', '中')
+                  if re.search(r'不完整', text):
+                      if re.search(r'病历|检查结果|病历记录', text):
+                          return ('内容', '负向', '低')
+                      return ('功能', '负向', '中')
+                  if re.search(r'退款|售后|退货|换货|拒赔', text):
+                      p = '高' if '拒赔' in text else '低'
+                      return ('体验', '负向', p)
+                  if re.search(r'配送|骑手|司机|打车|叫车|网约车|顺风车|拼车|接单|接机', text):
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if '客服' in text:
+                      return ('体验', '负向', '低')
+                  if re.search(r'广告|推送|弹窗|开屏', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'太贵|涨价|价格|不值|性价比|抽奖|充更多', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'会员|VIP|付费|充值|续费|红包|权益', text):
+                      p = '高' if re.search(r'自动续费|被欺骗|骗', text) else '低'
+                      return ('体验', '负向', p)
+                  if re.search(r'找不到|复杂|麻烦|繁琐|难找|不方便|设置太深|隐私设置', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'定位不准|定位偏差', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'照片被压缩|画质.*变|压缩.*模糊', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'折叠|翻半天', text):
+                      return ('体验', '负向', '低')
+                  if '无法撤回' in text:
+                      return ('功能', '负向', '中')
+                  if re.search(r'账户.{0,2}限制|账户.{0,2}冻结|限制.*转账|限制.*提现', text):
+                      return ('功能', '负向', '高')
+                  if re.search(r'额度太低|额度不够', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'到店.*没房|预订.*没房|没房了', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'没人接单|没接单', text):
+                      return ('体验', '负向', '高')
+                  if re.search(r'次日达|等了\d+天|等了\d+分钟', text):
+                      return ('体验', '负向', '高')
+                  if re.search(r'规则不透明|不透明', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'威胁|骚扰|疯狂打电话', text):
+                      return ('体验', '负向', '高')
+                  if re.search(r'重影|竖条|刮痕|显示屏', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'运费|退货.*运费', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'功能臃肿|臃肿|花里胡哨', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'bug|Bug|BUG', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'崩了|大面积故障|服务异常', text):
+                      return ('功能', '负向', '高')
+                  if re.search(r'识别为外出|打卡.*迟到|打卡.*外勤', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'付费推广|前五页', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'已读回执|已读', text):
+                      return ('体验', '中性', '低')
+                  return None
+                  def apply_priority_rules(text, ptype, priority):
+                  # apply_priority_rules v1.0 2026-05
+                  # KB Section 四: mitigation downgrade + severity boost + core function boost
+                  mitigation_kw = r'偶尔|有时|不影响使用|但整体|但基本|还行|勉强|凑合|一般般|还能用|将就|忍了|可以接受'
+                  no_downgrade_kw = r'闪退|崩溃|死机|数据丢失|支付失败|安全漏洞|食品安全|异物|变质|被欺骗|自动续费|虚假宣传|严重|根本|完全|一直|突然|受不了|忍不了|急用|关键|全错过|没法用|没法玩|没法看|靠不住|来不及'
+                  if re.search(mitigation_kw, text) and not re.search(no_downgrade_kw, text):
+                      if priority == '高':
+                          priority = '中'
+                      elif priority == '中':
+                          priority = '低'
+                  if ptype == '性能' and priority == '中':
+                      perf_severe_kw = r'严重|根本|完全|一直|突然|太慢|太卡|太大|太短|太严重|很严重|没法|不敢|靠不住|错过|来不及|没法用|没法玩|没法看|受不了|忍不了|急用|关键|全错过|全没了|耽误|废了|毁了|完蛋|崩溃边缘|用不下去|没法工作|没法学习|影响工作|影响学习|断断续续|越来越差|越来越慢|越来越卡|不同步|对不上|等不起|等不了|等不及|太可怕|太吓人|太离谱|太夸张|太差了|太烂了|太垃圾|太恶心|太烦人|太讨厌|太糟糕|太差劲'
+                      if re.search(perf_severe_kw, text):
+                          priority = '高'
+                  if ptype == '功能' and priority == '中':
+                      core_func_kw = r'支付|登录|下单|订单|转账|账户|交易|充值|提现|扣款|付款|退款|到账|余额|账单|注册|认证|安全|隐私|数据|同步|备份|导出|播放|上传|下载|发送|接收|消息|通知|会员|订阅|续费|匹配|导航|定位|预订|叫车|打车|挂号|问诊|处方|搜索|收藏|评论|分享|点赞|关注|直播|视频|语音|通话|打卡|签到|积分|优惠券|红包|取消|路线|行程|配送|物流|发货|收货|库存|售后|客服|菜单|购物车|商品|秒杀|抽卡|存档|联机|组队|更新|升级|安装|卸载|绑定|解绑|实名|验证|密码|短信|邮箱|手机|人脸|指纹|识别|验证码|注册|注销|激活|开通|关闭|暂停|恢复|重置|修改|变更|迁移|导入|导出|备份|还原|同步|合并|拆分|排序|筛选|过滤|分类|标签|标记|收藏|点赞|评论|回复|转发|分享|举报|投诉|反馈|建议|意见|评价|评分|打分|投票|问卷|调查|调研|测试|试用|体验|预览|演示|展示|推荐|推送|通知|提醒|消息|私信|聊天|对话|会话|通话|视频|语音|直播|播放|暂停|停止|快进|快退|跳过|循环|随机|顺序|列表|歌单|专辑|歌手|歌曲|音乐|音频|声音|音量|音质|音效|均衡|歌词|字幕|翻译|配音|解说|讲解|教程|课程|学习|培训|教育|考试|测验|作业|任务|项目|计划|日程|日历|时间|日期|提醒|闹钟|计时|倒计|秒表|计算|换算|汇率|单位|长度|重量|温度|天气|地图|导航|路线|交通|公交|地铁|火车|飞机|酒店|民宿|景点|门票|攻略|游记|签证|护照|保险|医疗|健康|运动|健身|跑步|骑行|游泳|瑜伽|冥想|睡眠|饮食|营养|食谱|菜谱|烹饪|烘焙|甜点|饮品|咖啡|茶|酒|饮料|水果|蔬菜|肉类|海鲜|零食|小吃|外卖|配送|快递|物流|包裹|邮件|短信|电话|通讯|联系|地址|位置|坐标|经纬|海拔|高度|深度|距离|面积|体积|重量|温度|湿度|气压|风速|风向|降水|天气|气候|环境|生态|自然|动物|植物|生物|化学|物理|数学|统计|概率|逻辑|推理|判断|决策|选择|优化|改进|提升|增强|强化|学习|训练|练习|复习|预习|准备|计划|安排|组织|管理|领导|指挥|协调|沟通|交流|合作|协作|团队|小组|部门|公司|企业|组织|机构|单位|学校|医院|银行|政府|军队|警察|消防|急救|救援|应急|危机|风险|安全|保护|防护|防御|攻击|入侵|病毒|木马|蠕虫|间谍|黑客|破解|盗版|侵权|抄袭|剽窃|伪造|假冒|欺诈|诈骗|欺骗|误导|虚假|不实|谣言|传言|传闻|消息|新闻|资讯|信息|数据|资料|文件|文档|报告|报表|图表|图形|图像|图片|照片|视频|音频|音乐|歌曲|电影|电视|节目|频道|电台|广播|直播|点播|回放|录播|转播|重播|复播|首播|首映|首演|首秀|首发|首测|首试|首用|首购|首付|首贷|首保|首赔|首付|首期|首批|首次|第一|第二|第三|最后|最终|终极|结束|完成|成功|失败|错误|异常|故障|问题|缺陷|漏洞|补丁|更新|升级|版本|发布|上线|下线|停服|维护|修复|优化|改进|提升|增强|强化|新增|增加|添加|删除|移除|取消|关闭|暂停|停止|终止|结束|完成|成功|失败|错误|异常|故障|问题|缺陷|漏洞|补丁|更新|升级|版本|发布|上线|下线|停服|维护|修复|优化|改进|提升|增强|强化|新增|增加|添加|删除|移除|取消|关闭|暂停|停止|终止|结束|完成|成功|失败|错误|异常|故障|问题|缺陷|漏洞|补丁|更新|升级|版本|发布|上线|下线|停服|维护|修复|优化|改进|提升|增强|强化|限流|求助|联动|离线|误报|失控|云台|避障|跟随|追踪|手柄|配对|传感器|摄像头|无人机|抖动|悬停|图传|飞行|一键|多设备|执行|遥控器|空调|手表|震动|推送|续航|丢失|重新配对|失控|撞|坏了|失效|不执行|不工作|不运行|形同虚设|飘|偏|延迟|卡顿|卡死|闪退|崩溃|死机|白屏|黑屏|变砖|强制退出|ANR|扣款异常|重复扣款|不明扣款|打不开|一片空白|404|同步失败|数据异常|金额算错|乱码|订单消失|记录没了|聊天记录没了|验证码收不到|注册失败|被盗|被封|被限流|被禁言|被锁|封禁|风控|拦截|没到账|不到账|钱没到|扣了钱|订单没生成|多扣|金额不对|账单不对|没声音|播放不了|播放没声音|恢复不了|恢复失败|数据不同步|状态不同步|信息不同步|升级失败|识别不了|识别不通过|识别失败|定位飘|定位偏|定位不准|定位偏差|不见了|消失|丢失|被举报|限制转账|限制提现|账户限制|账户冻结|不工作|不运行|无法使用|不可用|扣了费|扣了钱|找不到了|显示空白|收藏夹空白|不执行|不生效|功能缺失|识别率低|成功率太低|误报|漏发|卡粮|上不了网|突然没了|离线频繁|频繁掉线|格式不对|出粮不均匀|不认了|不支持|做不到|不能自定义|识别不准|识别率太低|准确率太低|升级失败|变砖|关不掉|取消不了|停不了|无法撤回|紧急|求助|报警|SOS|求救|危险'
+                      if re.search(core_func_kw, text):
+                          priority = '高'
+                  if ptype == '体验' and priority == '低':
+                      exp_moderate_kw = r'涨了|翻倍|全是|根本|一直|太慢|太复杂|太繁琐|藏得|找不到|不解决|不处理|没人|不理|不管|骗|虚假|陷阱|套路|坑|差|烂|垃圾|恶心|气死|气炸|火大|无语|失望|寒心|过分|离谱|坑爹|坑人|霸王|欺负|歧视|区别对待|不公平|不一致|不一样|差太多|差远了|差很大|天差地别|趁火打劫|坐地起价|乱收费|多收费|重复收费|隐藏费用|强制消费|捆绑销售|诱导消费|虚假促销|虚假优惠|先涨后降|明降暗涨|货不对板|缺斤少两|以次充好|偷工减料|敷衍|推诿|踢皮球|不负责|不作为|不专业|不礼貌|态度恶劣|态度差|骂人|辱骂|威胁|恐吓|骚扰|疯狂|不停|一直打|轰炸|\d+天|一个月|开不了|看不懂|不灵活|不好用|不完整|不齐全|不全面|不详细|不准确|不靠谱|不放心|不踏实|不安心|不省心|担心|害怕|焦虑|着急|急死了|等不及|等不了|等不起|耗不起|耽误事|误事|坏事|出事|危险|风险|隐患|漏洞|缺陷|毛病|问题多|问题大|问题严重|频繁|经常|总是|老是|动不动|三天两头|隔三差五|没完没了|无休止|无止境|没个头|没完|不停|不断|连续|持续|反复|一再|多次|好几次|无数次|数不清|记不清|麻木|无奈|无力|无助|绝望|崩溃|疯了|受不了|忍不了|忍无可忍|不能再忍|忍到极限|极限|底线|红线|原则|尊严|人格|人权|权益|利益|损失|损害|伤害|受伤|受害|吃亏|上当|被骗|被坑|被宰|被割|被收割|被薅|被薅羊毛|被套路|被算计|被利用|被消费|被浪费|被耽误|被拖累|被连累|被牵连|被影响|被干扰|被打扰|被骚扰|被侵犯|被侵害|被损害|被破坏|被毁|被毁掉|被毁灭|被摧毁|被粉碎|被打破|被打乱|被搞乱|被弄乱|被搅乱|被扰乱|被干扰|被打断|被中断|被终止|被停止|被暂停|被取消|被关闭|被封锁|被屏蔽|被过滤|被审查|被监控|被跟踪|被监视|被监听|被偷窥|被偷看|被偷听|被偷拍|被偷录|被偷窃|被盗取|被盗用|被冒用|被冒充|被伪造|被篡改|被修改|被删除|被移除|被清空|被清零|被归零|被抹去|被抹掉|被擦除|被消除|被消灭|被抹杀|被扼杀|被扼制|被压制|被压抑|被抑制|被限制|被约束|被束缚|被捆绑|被绑架|被挟持|被威胁|被恐吓|被吓唬|被吓到|被吓坏|被吓傻|被吓呆|被吓懵|被吓晕|被吓死|被吓跑|被吓退|被吓走|被吓逃|被吓躲|被吓藏|被吓缩'
+                      if re.search(exp_moderate_kw, text):
+                          priority = '中'
+                  if ptype == '内容' and priority == '低':
+                      cnt_moderate_kw = r'完全|根本|太不|严重|错误|不对|过时|不一样|不一致|不公平|没法玩|没法用|全是|一直|骗|假|虚假|误导|不实|伪造|假冒|抄袭|剽窃|盗版|侵权|刷评|水军|假评'
+                      if re.search(cnt_moderate_kw, text):
+                          priority = '中'
+                  return priority
+
+
+              result = iron_classify(text)
+              if result:
+                  ptype, sentiment, priority = result
+                  priority = apply_priority_rules(text, ptype, priority)
+                  source = '铁律拦截'
+              else:
+                  llm_result= {}
+                  try:
+                      raw = str(feature_json).strip()
+                      if raw.startswith('```'):
+                          raw = raw.split('\n', 1)[-1].rsplit('```', 1)[0].strip()
+                      llm_result = json.loads(raw)
+                      if not isinstance(llm_result, dict):
+                          llm_result= {}
+                  except (json.JSONDecodeError, TypeError, ValueError):
+                      pass
+                  if llm_result.get('problem_type') in ['功能', '性能','体验', '内容']:
+                      ptype = llm_result['problem_type']
+                      sentiment = llm_result.get('sentiment', '负向')
+                      if sentiment not in ['负向', '中性', '正向']:
+                          sentiment = '负向'
+                      priority = llm_result.get('priority', '低')
+                      if priority not in ['高', '中', '低']:
+                          priority = '低'
+                      source= 'LLM分析'
+                  else:
+                      ptype, sentiment, priority = '体验','中性', '低'
+                      source = '安全兜底'
+
+              type_map = {'功能': '功能问题','性能': '性能问题', '体验': '体验问题', '内容': '内容问题'}
+              type_cn = type_map.get(ptype,ptype)
+              tag_str = ', '.join(tags) if tags else '无'
+
+              output =f"\U0001F4CB 分类结果\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\U0001F3AD 情绪：{sentiment}\n\U0001F4C2 类型：{type_cn}\n\U0001F534 优先级：{priority}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\U0001F4CC 场景：{scene or '未指定'}\n\U0001F4A1 核心功能：{'是' if core else '否'}\n\U0001F464 用户标签：{tag_str}\n\U0001F52E 隐含需求：{need}\n\U0001F3F7️ 来源：{source}"
+              return {
+                  'output': output,
+                  'problem_type': ptype,
+                  'sentiment': sentiment,
+                  'priority': priority,
+                  'user_tags': tag_str,
+                  'implicit_need': need,
+                  'is_core':core
+              }
+        code_language: python3
+        outputs:
+          implicit_need:
+            children: null
+            type: string
+          is_core:
+            children: null
+            type: string
+          output:
+            children: null
+            type: string
+          priority:
+            children: null
+            type: string
+          problem_type:
+            children: null
+            type: string
+          sentiment:
+            children: null
+            type: string
+          user_tags:
+            children: null
+            type: string
+        selected: false
+        title: 反馈规则引擎
+        type: code
+        variables:
+        - value_selector:
+          - '1776665889997'
+          - text
+          value_type: string
+          variable: feature_json
+        - value_selector:
+          - '1776648944081'
+          - sys.query
+          value_type: string
+          variable: original_query
+        - value_selector:
+          - conversation
+          - scene
+          value_type: string
+          variable: current_scene
+      height: 52
+      id: '1776670000002'
+      position:
+        x: 2072
+        y: 1094
+      positionAbsolute:
+        x: 2072
+        y: 1094
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1776670000002.output#}}'
+        selected: false
+        title: 反馈分类结果
+        type: answer
+        variables: []
+      height: 103
+      id: '1776665895831'
+      position:
+        x: 2414
+        y: 1068
+      positionAbsolute:
+        x: 2414
+        y: 1068
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: f1a2b3c4-5678-9abc-def0-1234567890ab
+          role: system
+          text: |-
+            从用户输入中提取场景信息。输出格式严格为JSON：
+            {"scene": "提取的行业/产品类型", "reader_type": "提取的读者类型或空字符串"}
+
+            场景提取规则：
+            1. 从输入中识别行业类型（如电商/社交/金融/教育/AI/ToC/ToB等）
+            2. 从输入中识别产品类型（如社交APP/电商平台/机器人等）
+            3. 从输入中识别读者类型（如开发/运营/产品/设计等），无则填空字符串
+            4. 合并行业和产品类型为scene字段，如"ToC社交APP"、"电商"、"金融行业"
+
+            示例：
+            输入：我在做ToC社交APP
+            输出：{"scene": "ToC社交APP", "reader_type": ""}
+            输入：我是做电商的，PRD主要给开发看
+            输出：{"scene": "电商", "reader_type": "开发"}
+            输入：金融行业，读者是运营团队
+            输出：{"scene": "金融", "reader_type": "运营"}
+            输入：做扫地机器人的
+            输出：{"scene": "扫地机器人", "reader_type": ""}
+
+            只输出JSON，不要输出其他内容。
+        selected: false
+        structured_output_enabled: false
+        title: 场景识别
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1776665919302'
+      position:
+        x: 1388
+        y: 329
+      positionAbsolute:
+        x: 1388
+        y: 329
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: |
+          import json
+          import re
+
+          def main(feature_json: str, original_query:str, current_scene: str) -> dict:
+              text = str(original_query).strip()
+              if not text:
+                  return {'output': '⚠️ 输入为空', 'problem_type':'体验', 'sentiment': '中性', 'priority': '低', 'user_tags': '', 'implicit_need':'无', 'is_core': False}
+
+              SCENE_CORE_MAP = {
+                  '电商': '搜索,购物车,下单,支付,退款,物流,评价,客服,商品,订单,优惠券,价格,会员,售后,发货,退货',
+                  '社交': '聊天,消息,好友,动态,评论,点赞,分享,群,朋友圈,私信,语音,视频,关注,粉丝,账号,登录',
+                  '金融': '转账,支付,余额,账单,还款,借款,理财,基金,股票,保险,信用,风控,银行卡,充值,提现',
+                  '教育':'课程,学习,作业,考试,成绩,老师,学生,班级,直播,录播,题库,练习,笔记,进度,证书',
+                  '外卖': '下单,配送,骑手,商家,餐品,订单,支付,退款,评价,客服,优惠券,红包,会员,地址',
+                  '出行': '打车,司机,路线,导航,地图,定位,行程,费用,支付,评价,客服,投诉,安全,紧急,拼车',
+                  '游戏': '登录,匹配,对战,充值,皮肤,英雄,角色,装备,技能,地图,服务器,延迟,卡顿,闪退,崩溃',
+                  '办公':'文档,表格,演示,协作,会议,日历,邮件,通讯录,审批,流程,项目,任务,日程,笔记,云盘',
+                  '医疗': '问诊,医生,处方,药品,挂号,预约,检查,报告,医保,支付,退款,评价,客服,投诉,推荐',
+                  '智能硬件': 'WiFi,蓝牙,配网,连接,固件,升级,地图,清扫,充电,回充,避障,吸力,噪音,续航,电池',
+                  '音乐': '播放,歌曲,歌单,搜索,推荐,下载,收藏,分享,歌词,音质,会员,付费,免费,广告,推送',
+              }
+
+              def detect_scene(text):
+                  best = ''
+                  best_score = 0
+                  for key, funcs in SCENE_CORE_MAP.items():
+                      kws = funcs.split(',')
+                      score = sum(1 for k in kws if k in text)
+                      if score> best_score:
+                          best_score = score
+                          best= key
+                  return best if best_score >= 1 else ''
+
+              scene = str(current_scene).strip()
+              if scene in ['未指定', '', 'None']:
+                  scene = detect_scene(text)
+              def is_core_func(text, scene):
+                  if scene and scene in SCENE_CORE_MAP:
+                      return any(k in text for k in SCENE_CORE_MAP[scene].split(','))
+                  return False
+
+              def extract_tags(text):
+                  tags = []
+                  if re.search(r'(会员|VIP|充值|付费|订阅|充了|花钱)', text):
+                      tags.append('付费用户')
+                  if re.search(r'(刚买|刚注册|第一次用|新手)', text):
+                      tags.append('新用户')
+                  if re.search(r'(用了.*月|用了.*年|老用户|用了很久)', text):
+                      tags.append('老用户')
+                  return tags
+
+              def extract_need(text):
+                  mappings =[
+                      (r'每次都要(.{2,6})', '自动化'),
+                      (r'找不到(.{2,6})','入口优化'),
+                      (r'太麻烦了|太复杂', '流程简化'),
+                      (r'能不能(加个|增加|支持)(.{2,8})',None),
+                      (r'希望(增加|支持|有)(.{2,8})', None),
+                      (r'噪音太大|太吰','静音模式'),
+                      (r'充电太慢|充电.*慢', '快充'),
+                      (r'总是断连|断连','连接稳定性'),
+                      (r'没有(.{2,6})模式', None),
+                  ]
+                  for pattern, need in mappings:
+                      m = re.search(pattern, text)
+                      if m:
+                          if need:
+                              return need
+                          groups = m.groups()
+                          if len(groups)>= 2 and groups[-1]:
+                              return groups[-1][:12]
+                          elif len(groups) >= 1 and groups[0]:
+                              return groups[0][:12]
+                  return '无'
+
+              core = is_core_func(text,scene)
+              tags = extract_tags(text)
+              need = extract_need(text)
+              def iron_classify(text):
+                  # iron_classify v1.0 2026-05
+                  # Priority rules aligned with knowledge base priority matrix
+                  func_high_kw = r'闪退|崩溃|死机|白屏|黑屏|变砖|支付失败|数据丢失|登录不上|账号被盗|隐私泄露'
+                  svc_high_kw = r'食品安全|异物|变质|寄生虫|吃出|拉肚子|食物中毒|发霉|馊了|臭了|不新鲜|拒赔|骑手态度|司机态度|等超久|自动续费|被欺骗|等了\d+分钟|等了\d+小时|没人接单|没接单|骚扰|威胁'
+                  perf_high_kw = r'发烫|不敢用|完全卡死|卡死'
+                  content_high_kw = r'虚假宣传|诈骗|假货|杀熟|刷.{0,1}评|假评|水军'
+                  irony_pos = ['太棒了', '绝了', '真厉害', '厉害了', '完美']
+                  irony_neg = ['闪退', '崩溃', '死机']
+                  if any(k in text for k in irony_pos) and any(k in text for k in irony_neg):
+                      return ('功能', '负向', '高')
+                  neg_ctx = ['但', '但是', '不过', '就是', '可惜', '然而', '只是', '可是', '虽然',
+                             '差评', '问题', '气愤', '威胁', '刷', '假', '骗', '坑', '垃圾', '太差',
+                             '不满', '投诉', '拒', '不解决', '不管']
+                  pos_words = ['很好', '好用', '专业', '不错', '很棒', '超好用',
+                               '体验很好', '给力', '真香', '效率提高', '帮助提高', '支持导出',
+                               '覆盖广', '很全', '很细', '很准', '很及时', '很方便', '很酷',
+                               '很震撼', '很到位', '准时送达', '好评']
+                  if any(k in text for k in pos_words):
+                      if not any(n in text for n in neg_ctx):
+                          return ('体验', '正向', '低')
+                  fixed_signals = ['修好了', '已解决', '已修复', '终于不', '终于没', '恢复正常',
+                                   '不再闪退', '不再崩溃', '不再报错']
+                  if any(k in text for k in fixed_signals):
+                      return None
+                  if re.search(r'能不能|希望|建议|想要|加个|能不能加', text):
+                      return ('体验', '中性', '低')
+                  true_crash = bool(re.search(
+                      r'闪退|崩溃|死机|白屏|黑屏|变砖|强制退出|ANR|'
+                      r'支付失败|扣款异常|重复扣款|数据丢失|登录不上|账号被盗|'
+                      r'隐私泄露|隐私暴露|不明扣款|'
+                      r'打不开|一片空白|404|'
+                      r'同步失败|数据异常|金额算错|乱码|订单消失|记录没了|聊天记录没了|'
+                      r'验证码收不到|注册失败|'
+                      r'被盗|被封|被限流|被禁言|被锁|封禁|风控|拦截|'
+                      r'没到账|不到账|钱没到|扣了钱|订单没生成|多扣|金额不对|账单不对|'
+                      r'账户限制|账户冻结|限制转账|限制提现|'
+                      r'没声音|播放不了|播放没声音|'
+                      r'恢复不了|恢复失败|'
+                      r'数据不同步|状态不同步|信息不同步|'
+                      r'升级失败|识别不了',
+                      text
+                  ))
+                  broad_func_failure = bool(re.search(
+                      r'闪退|崩溃|死机|白屏|黑屏|变砖|强制退出|ANR|'
+                      r'支付失败|扣款异常|重复扣款|数据丢失|登录不上|账号被盗|'
+                      r'隐私泄露|隐私暴露|不明扣款|'
+                      r'打不开|一片空白|404|'
+                      r'功能失效|没反应|报错|'
+                      r'上传失败|下载失败|保存失败|同步失败|'
+                      r'不能用|没法用|用不了|无响应|失效|失灵|'
+                      r'保存不了|传不了|下不了|载不出|'
+                      r'掉线|断连|无法连接|连不上|连接失败|断开|'
+                      r'验证码收不到|注册失败|'
+                      r'被盗|被封|被限流|被禁言|'
+                      r'数据异常|金额算错|乱码|订单消失|记录没了|聊天记录没了|'
+                      r'卡死无法|卡死不能|无法跳转|形同虚设|绕过|绕开|'
+                      r'被锁|锁了|封禁|解封|申诉|风控|拦截|'
+                      r'没到账|不到账|钱没到|扣了钱|订单没生成|'
+                      r'多扣|金额不对|账单不对|'
+                      r'没声音|播放不了|播放没声音|没声|'
+                      r'识别不通过|识别失败|'
+                      r'恢复不了|没恢复|恢复失败|'
+                      r'定位.{0,2}飘|定位.{0,2}偏|定位不准|定位偏差|'
+                      r'不见了|消失|丢失|'
+                      r'被举报|限制转账|限制提现|账户限制|账户冻结|'
+                      r'不工作|不运行|无法使用|不可用|'
+                      r'扣了.{0,4}费|扣了.{0,4}钱|'
+                      r'找不到了|显示空白|收藏夹空白|'
+                      r'数据不同步|状态不同步|信息不同步|'
+                      r'不执行|不生效|功能缺失|'
+                      r'识别率低|成功率太低|'
+                      r'误报|漏发|卡粮|'
+                      r'上不了网|'
+                      r'突然没了|突然.{0,2}没|'
+                      r'离线频繁|频繁.*掉线|'
+                      r'格式不对|出粮不均匀|'
+                      r'识别不了|不认了|'
+                      r'不支持|做不到|不能自定义|'
+                      r'识别不准|识别率太低|准确率太低|'
+                      r'升级失败|变砖',
+                      text
+                  ))
+                  pure_svc = ['骑手', '配送', '商家', '餐品', '食物', '外卖', '快递', '驿站', '快递柜', '包裹', '取件码', '送餐']
+                  has_pure_svc = any(k in text for k in pure_svc)
+                  ambig_svc = ['退款', '售后', '客服', '退货', '换货', '拒赔', '投诉', '举报', '物流', '发货', '报修', '物业', '保洁']
+                  has_ambig_svc = any(k in text for k in ambig_svc)
+                  has_driver = '司机' in text
+                  if has_pure_svc and broad_func_failure:
+                      if re.search(r'定位.{0,2}飘|定位.{0,2}偏|定位不准|定位偏差', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_pure_svc and not broad_func_failure:
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_driver and broad_func_failure:
+                      if re.search(r'扣了|扣费|取消费|扣款|多扣|不到账|没到账', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      if re.search(r'定位.{0,2}飘|定位.{0,2}偏|定位不准|定位偏差', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_driver and not broad_func_failure:
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_ambig_svc and true_crash:
+                      p = '高' if re.search(func_high_kw, text) else '中'
+                      return ('功能', '负向', p)
+                  if has_ambig_svc and broad_func_failure:
+                      strong_func_signals = bool(re.search(
+                          r'扣了钱|订单没生成|没到账|不到账|钱没到|多扣|金额不对|账单不对|'
+                          r'格式不对|变砖|升级失败|'
+                          r'数据异常|金额算错|乱码|订单消失|记录没了|'
+                          r'被锁|封禁|风控|拦截|账户限制|账户冻结|'
+                          r'打不开|一片空白|404|'
+                          r'识别不了|识别不通过',
+                          text
+                      ))
+                      if strong_func_signals:
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      return ('体验', '负向', '低')
+                  if broad_func_failure:
+                      has_perf = bool(re.search(
+                          r'卡顿|太卡了|很卡|变卡|不流畅|卡得|卡的要死|卡死了|卡的要命|'
+                          r'加载慢|启动慢|打开慢|响应慢|运行慢|'
+                          r'延迟高|网络延迟|高延迟|延迟太大|延迟严重|'
+                          r'耗电|费电|掉电快|发烫|过热|'
+                          r'掉帧|帧率低|不跟手|画面不流畅|'
+                          r'缓冲|转圈圈|一直转圈|loading|缓冲中|'
+                          r'占用高|内存高|资源占用|CPU高|'
+                          r'画面延迟|声音延迟|画面不同步|声音不同步',
+                          text
+                      ))
+                      if has_perf:
+                          if re.search(r'太慢.*用不了|用不了.*太慢|等\d+秒.*用不了|用不了.*等', text):
+                              p = '高' if re.search(perf_high_kw, text) else '中'
+                              return ('性能', '负向', p)
+                      p = '高' if re.search(func_high_kw, text) else '中'
+                      return ('功能', '负向', p)
+                  if re.search(r'(?:太|很|特别|变|更|越|也|都|还是|就是).*卡|卡(?:顿|住|得|的|了)', text):
+                      if not re.search(r'银行卡|打卡|会员卡|卡通|卡片|卡包', text):
+                          p = '高' if re.search(perf_high_kw, text) else '中'
+                          return ('性能', '负向', p)
+                  if re.search(r'(?:太|很|特别|更|越).*慢|慢(?:了|得|的)', text):
+                      if not re.search(r'回复.*慢|问诊|医生|客服.*慢|退款|售后|审核|物流|发货|配送', text):
+                          p = '高' if re.search(perf_high_kw, text) else '中'
+                          return ('性能', '负向', p)
+                  if re.search(r'启动.{0,3}\d+秒|启动要|打开要', text):
+                      return ('性能', '负向', '中')
+                  if '续航' in text:
+                      return ('性能', '负向', '中')
+                  if '假死' in text:
+                      return ('性能', '负向', '高')
+                  if '限速' in text:
+                      return ('性能', '负向', '中')
+                  if re.search(r'(?:资源|内存|CPU).*(?:占用|高|大|太多)', text):
+                      return ('性能', '负向', '中')
+                  if re.search(r'转.{0,3}圈', text):
+                      if not re.search(r'朋友圈|社交圈', text):
+                          return ('性能', '负向', '中')
+                  if re.search(r'手机.{0,3}烫|烫.{0,3}手', text):
+                      return ('性能', '负向', '高')
+                  if re.search(r'延迟.{0,4}(?:大|严重|高|太多)', text):
+                      if not re.search(r'数据.*延迟|汇率.*延迟|牌价.*延迟', text):
+                          return ('性能', '负向', '中')
+                  if re.search(r'不同步', text):
+                      if re.search(r'数据|状态|信息|订单|库存|记录', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      if not re.search(r'字幕|歌词|翻译', text):
+                          return ('性能', '负向', '中')
+                  has_content_issue = bool(re.search(
+                      r'图文不符|描述不符|实物不符|货不对板|缺斤少两|'
+                      r'虚假宣传|夸大宣传|误导|标称|标示|'
+                      r'推荐不准|推荐不好|搜索不对|搜不到|搜出来不对|'
+                      r'匹配不公|匹配机制|算法有问题|'
+                      r'翻译错|字幕不同步|歌词延迟|歌词翻译不对|'
+                      r'内容过时|信息旧|攻略过时|信息过时|'
+                      r'数据有延迟|数据延迟|不准确|算错|'
+                      r'答案有错|题库.*错|'
+                      r'对不上|不准确',
+                      text
+                  ))
+                  if has_content_issue:
+                      p = '高' if re.search(content_high_kw, text) else '低'
+                      return ('内容', '负向', p)
+                  if re.search(r'数据.{0,2}延迟|汇率.*延迟|牌价.*延迟', text):
+                      return ('内容', '负向', '低')
+                  if '描述不符' in text or '实物不符' in text or '缺斤少两' in text:
+                      p = '高' if re.search(content_high_kw, text) else '低'
+                      return ('内容', '负向', p)
+                  if re.search(r'刷.{0,1}评|假评|水军|五星好评', text):
+                      return ('内容', '负向', '高')
+                  if re.search(r'信息过时|早就关门|攻略.*过时', text):
+                      return ('内容', '负向', '低')
+                  if re.search(r'材质.*不符|手感.*不一样', text):
+                      return ('内容', '负向', '低')
+                  if '杀熟' in text:
+                      return ('体验', '负向', '高')
+                  if re.search(r'关不掉|取消不了|停不了', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'审核不通过|审核.*拒绝', text):
+                      if re.search(r'流程|繁琐', text):
+                          return ('体验', '负向', '低')
+                      return ('功能', '负向', '中')
+                  if re.search(r'不能用|用不了|没法用', text):
+                      if re.search(r'更新|升级', text):
+                          return ('体验', '负向', '低')
+                      p = '高' if re.search(func_high_kw, text) else '中'
+                      return ('功能', '负向', p)
+                  if re.search(r'对不上', text):
+                      if re.search(r'数据|报表|销售额|财务|账', text):
+                          return ('内容', '负向', '低')
+                      return ('功能', '负向', '中')
+                  if re.search(r'不完整', text):
+                      if re.search(r'病历|检查结果|病历记录', text):
+                          return ('内容', '负向', '低')
+                      return ('功能', '负向', '中')
+                  if re.search(r'退款|售后|退货|换货|拒赔', text):
+                      p = '高' if '拒赔' in text else '低'
+                      return ('体验', '负向', p)
+                  if re.search(r'配送|骑手|司机|打车|叫车|网约车|顺风车|拼车|接单|接机', text):
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if '客服' in text:
+                      return ('体验', '负向', '低')
+                  if re.search(r'广告|推送|弹窗|开屏', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'太贵|涨价|价格|不值|性价比|抽奖|充更多', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'会员|VIP|付费|充值|续费|红包|权益', text):
+                      p = '高' if re.search(r'自动续费|被欺骗|骗', text) else '低'
+                      return ('体验', '负向', p)
+                  if re.search(r'找不到|复杂|麻烦|繁琐|难找|不方便|设置太深|隐私设置', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'定位不准|定位偏差', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'照片被压缩|画质.*变|压缩.*模糊', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'折叠|翻半天', text):
+                      return ('体验', '负向', '低')
+                  if '无法撤回' in text:
+                      return ('功能', '负向', '中')
+                  if re.search(r'账户.{0,2}限制|账户.{0,2}冻结|限制.*转账|限制.*提现', text):
+                      return ('功能', '负向', '高')
+                  if re.search(r'额度太低|额度不够', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'到店.*没房|预订.*没房|没房了', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'没人接单|没接单', text):
+                      return ('体验', '负向', '高')
+                  if re.search(r'次日达|等了\d+天|等了\d+分钟', text):
+                      return ('体验', '负向', '高')
+                  if re.search(r'规则不透明|不透明', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'威胁|骚扰|疯狂打电话', text):
+                      return ('体验', '负向', '高')
+                  if re.search(r'重影|竖条|刮痕|显示屏', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'运费|退货.*运费', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'功能臃肿|臃肿|花里胡哨', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'bug|Bug|BUG', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'崩了|大面积故障|服务异常', text):
+                      return ('功能', '负向', '高')
+                  if re.search(r'识别为外出|打卡.*迟到|打卡.*外勤', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'付费推广|前五页', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'已读回执|已读', text):
+                      return ('体验', '中性', '低')
+                  return None
+                  def apply_priority_rules(text, ptype, priority):
+                  # apply_priority_rules v1.0 2026-05
+                  # KB Section 四: mitigation downgrade + severity boost + core function boost
+                  mitigation_kw = r'偶尔|有时|不影响使用|但整体|但基本|还行|勉强|凑合|一般般|还能用|将就|忍了|可以接受'
+                  no_downgrade_kw = r'闪退|崩溃|死机|数据丢失|支付失败|安全漏洞|食品安全|异物|变质|被欺骗|自动续费|虚假宣传|严重|根本|完全|一直|突然|受不了|忍不了|急用|关键|全错过|没法用|没法玩|没法看|靠不住|来不及'
+                  if re.search(mitigation_kw, text) and not re.search(no_downgrade_kw, text):
+                      if priority == '高':
+                          priority = '中'
+                      elif priority == '中':
+                          priority = '低'
+                  if ptype == '性能' and priority == '中':
+                      perf_severe_kw = r'严重|根本|完全|一直|突然|太慢|太卡|太大|太短|太严重|很严重|没法|不敢|靠不住|错过|来不及|没法用|没法玩|没法看|受不了|忍不了|急用|关键|全错过|全没了|耽误|废了|毁了|完蛋|崩溃边缘|用不下去|没法工作|没法学习|影响工作|影响学习|断断续续|越来越差|越来越慢|越来越卡|不同步|对不上|等不起|等不了|等不及|太可怕|太吓人|太离谱|太夸张|太差了|太烂了|太垃圾|太恶心|太烦人|太讨厌|太糟糕|太差劲'
+                      if re.search(perf_severe_kw, text):
+                          priority = '高'
+                  if ptype == '功能' and priority == '中':
+                      core_func_kw = r'支付|登录|下单|订单|转账|账户|交易|充值|提现|扣款|付款|退款|到账|余额|账单|注册|认证|安全|隐私|数据|同步|备份|导出|播放|上传|下载|发送|接收|消息|通知|会员|订阅|续费|匹配|导航|定位|预订|叫车|打车|挂号|问诊|处方|搜索|收藏|评论|分享|点赞|关注|直播|视频|语音|通话|打卡|签到|积分|优惠券|红包|取消|路线|行程|配送|物流|发货|收货|库存|售后|客服|菜单|购物车|商品|秒杀|抽卡|存档|联机|组队|更新|升级|安装|卸载|绑定|解绑|实名|验证|密码|短信|邮箱|手机|人脸|指纹|识别|验证码|注册|注销|激活|开通|关闭|暂停|恢复|重置|修改|变更|迁移|导入|导出|备份|还原|同步|合并|拆分|排序|筛选|过滤|分类|标签|标记|收藏|点赞|评论|回复|转发|分享|举报|投诉|反馈|建议|意见|评价|评分|打分|投票|问卷|调查|调研|测试|试用|体验|预览|演示|展示|推荐|推送|通知|提醒|消息|私信|聊天|对话|会话|通话|视频|语音|直播|播放|暂停|停止|快进|快退|跳过|循环|随机|顺序|列表|歌单|专辑|歌手|歌曲|音乐|音频|声音|音量|音质|音效|均衡|歌词|字幕|翻译|配音|解说|讲解|教程|课程|学习|培训|教育|考试|测验|作业|任务|项目|计划|日程|日历|时间|日期|提醒|闹钟|计时|倒计|秒表|计算|换算|汇率|单位|长度|重量|温度|天气|地图|导航|路线|交通|公交|地铁|火车|飞机|酒店|民宿|景点|门票|攻略|游记|签证|护照|保险|医疗|健康|运动|健身|跑步|骑行|游泳|瑜伽|冥想|睡眠|饮食|营养|食谱|菜谱|烹饪|烘焙|甜点|饮品|咖啡|茶|酒|饮料|水果|蔬菜|肉类|海鲜|零食|小吃|外卖|配送|快递|物流|包裹|邮件|短信|电话|通讯|联系|地址|位置|坐标|经纬|海拔|高度|深度|距离|面积|体积|重量|温度|湿度|气压|风速|风向|降水|天气|气候|环境|生态|自然|动物|植物|生物|化学|物理|数学|统计|概率|逻辑|推理|判断|决策|选择|优化|改进|提升|增强|强化|学习|训练|练习|复习|预习|准备|计划|安排|组织|管理|领导|指挥|协调|沟通|交流|合作|协作|团队|小组|部门|公司|企业|组织|机构|单位|学校|医院|银行|政府|军队|警察|消防|急救|救援|应急|危机|风险|安全|保护|防护|防御|攻击|入侵|病毒|木马|蠕虫|间谍|黑客|破解|盗版|侵权|抄袭|剽窃|伪造|假冒|欺诈|诈骗|欺骗|误导|虚假|不实|谣言|传言|传闻|消息|新闻|资讯|信息|数据|资料|文件|文档|报告|报表|图表|图形|图像|图片|照片|视频|音频|音乐|歌曲|电影|电视|节目|频道|电台|广播|直播|点播|回放|录播|转播|重播|复播|首播|首映|首演|首秀|首发|首测|首试|首用|首购|首付|首贷|首保|首赔|首付|首期|首批|首次|第一|第二|第三|最后|最终|终极|结束|完成|成功|失败|错误|异常|故障|问题|缺陷|漏洞|补丁|更新|升级|版本|发布|上线|下线|停服|维护|修复|优化|改进|提升|增强|强化|新增|增加|添加|删除|移除|取消|关闭|暂停|停止|终止|结束|完成|成功|失败|错误|异常|故障|问题|缺陷|漏洞|补丁|更新|升级|版本|发布|上线|下线|停服|维护|修复|优化|改进|提升|增强|强化|新增|增加|添加|删除|移除|取消|关闭|暂停|停止|终止|结束|完成|成功|失败|错误|异常|故障|问题|缺陷|漏洞|补丁|更新|升级|版本|发布|上线|下线|停服|维护|修复|优化|改进|提升|增强|强化|限流|求助|联动|离线|误报|失控|云台|避障|跟随|追踪|手柄|配对|传感器|摄像头|无人机|抖动|悬停|图传|飞行|一键|多设备|执行|遥控器|空调|手表|震动|推送|续航|丢失|重新配对|失控|撞|坏了|失效|不执行|不工作|不运行|形同虚设|飘|偏|延迟|卡顿|卡死|闪退|崩溃|死机|白屏|黑屏|变砖|强制退出|ANR|扣款异常|重复扣款|不明扣款|打不开|一片空白|404|同步失败|数据异常|金额算错|乱码|订单消失|记录没了|聊天记录没了|验证码收不到|注册失败|被盗|被封|被限流|被禁言|被锁|封禁|风控|拦截|没到账|不到账|钱没到|扣了钱|订单没生成|多扣|金额不对|账单不对|没声音|播放不了|播放没声音|恢复不了|恢复失败|数据不同步|状态不同步|信息不同步|升级失败|识别不了|识别不通过|识别失败|定位飘|定位偏|定位不准|定位偏差|不见了|消失|丢失|被举报|限制转账|限制提现|账户限制|账户冻结|不工作|不运行|无法使用|不可用|扣了费|扣了钱|找不到了|显示空白|收藏夹空白|不执行|不生效|功能缺失|识别率低|成功率太低|误报|漏发|卡粮|上不了网|突然没了|离线频繁|频繁掉线|格式不对|出粮不均匀|不认了|不支持|做不到|不能自定义|识别不准|识别率太低|准确率太低|升级失败|变砖|关不掉|取消不了|停不了|无法撤回|紧急|求助|报警|SOS|求救|危险'
+                      if re.search(core_func_kw, text):
+                          priority = '高'
+                  if ptype == '体验' and priority == '低':
+                      exp_moderate_kw = r'涨了|翻倍|全是|根本|一直|太慢|太复杂|太繁琐|藏得|找不到|不解决|不处理|没人|不理|不管|骗|虚假|陷阱|套路|坑|差|烂|垃圾|恶心|气死|气炸|火大|无语|失望|寒心|过分|离谱|坑爹|坑人|霸王|欺负|歧视|区别对待|不公平|不一致|不一样|差太多|差远了|差很大|天差地别|趁火打劫|坐地起价|乱收费|多收费|重复收费|隐藏费用|强制消费|捆绑销售|诱导消费|虚假促销|虚假优惠|先涨后降|明降暗涨|货不对板|缺斤少两|以次充好|偷工减料|敷衍|推诿|踢皮球|不负责|不作为|不专业|不礼貌|态度恶劣|态度差|骂人|辱骂|威胁|恐吓|骚扰|疯狂|不停|一直打|轰炸|\d+天|一个月|开不了|看不懂|不灵活|不好用|不完整|不齐全|不全面|不详细|不准确|不靠谱|不放心|不踏实|不安心|不省心|担心|害怕|焦虑|着急|急死了|等不及|等不了|等不起|耗不起|耽误事|误事|坏事|出事|危险|风险|隐患|漏洞|缺陷|毛病|问题多|问题大|问题严重|频繁|经常|总是|老是|动不动|三天两头|隔三差五|没完没了|无休止|无止境|没个头|没完|不停|不断|连续|持续|反复|一再|多次|好几次|无数次|数不清|记不清|麻木|无奈|无力|无助|绝望|崩溃|疯了|受不了|忍不了|忍无可忍|不能再忍|忍到极限|极限|底线|红线|原则|尊严|人格|人权|权益|利益|损失|损害|伤害|受伤|受害|吃亏|上当|被骗|被坑|被宰|被割|被收割|被薅|被薅羊毛|被套路|被算计|被利用|被消费|被浪费|被耽误|被拖累|被连累|被牵连|被影响|被干扰|被打扰|被骚扰|被侵犯|被侵害|被损害|被破坏|被毁|被毁掉|被毁灭|被摧毁|被粉碎|被打破|被打乱|被搞乱|被弄乱|被搅乱|被扰乱|被干扰|被打断|被中断|被终止|被停止|被暂停|被取消|被关闭|被封锁|被屏蔽|被过滤|被审查|被监控|被跟踪|被监视|被监听|被偷窥|被偷看|被偷听|被偷拍|被偷录|被偷窃|被盗取|被盗用|被冒用|被冒充|被伪造|被篡改|被修改|被删除|被移除|被清空|被清零|被归零|被抹去|被抹掉|被擦除|被消除|被消灭|被抹杀|被扼杀|被扼制|被压制|被压抑|被抑制|被限制|被约束|被束缚|被捆绑|被绑架|被挟持|被威胁|被恐吓|被吓唬|被吓到|被吓坏|被吓傻|被吓呆|被吓懵|被吓晕|被吓死|被吓跑|被吓退|被吓走|被吓逃|被吓躲|被吓藏|被吓缩'
+                      if re.search(exp_moderate_kw, text):
+                          priority = '中'
+                  if ptype == '内容' and priority == '低':
+                      cnt_moderate_kw = r'完全|根本|太不|严重|错误|不对|过时|不一样|不一致|不公平|没法玩|没法用|全是|一直|骗|假|虚假|误导|不实|伪造|假冒|抄袭|剽窃|盗版|侵权|刷评|水军|假评'
+                      if re.search(cnt_moderate_kw, text):
+                          priority = '中'
+                  return priority
+
+
+              result = iron_classify(text)
+              if result:
+                  ptype, sentiment, priority = result
+                  priority = apply_priority_rules(text, ptype, priority)
+                  source = '铁律拦截'
+              else:
+                  llm_result= {}
+                  try:
+                      raw = str(feature_json).strip()
+                      if raw.startswith('```'):
+                          raw = raw.split('\n', 1)[-1].rsplit('```', 1)[0].strip()
+                      llm_result = json.loads(raw)
+                      if not isinstance(llm_result, dict):
+                          llm_result= {}
+                  except (json.JSONDecodeError, TypeError, ValueError):
+                      pass
+                  if llm_result.get('problem_type') in ['功能', '性能','体验', '内容']:
+                      ptype = llm_result['problem_type']
+                      sentiment = llm_result.get('sentiment', '负向')
+                      if sentiment not in ['负向', '中性', '正向']:
+                          sentiment = '负向'
+                      priority = llm_result.get('priority', '低')
+                      if priority not in ['高', '中', '低']:
+                          priority = '低'
+                      source= 'LLM分析'
+                  else:
+                      ptype, sentiment, priority = '体验','中性', '低'
+                      source = '安全兜底'
+
+              type_map = {'功能': '功能问题','性能': '性能问题', '体验': '体验问题', '内容': '内容问题'}
+              type_cn = type_map.get(ptype,ptype)
+              tag_str = ', '.join(tags) if tags else '无'
+
+              output =f"\U0001F4CB 分类结果\n━━━━━━━━━━━━━━━━━━━━\n\U0001F3AD 情绪：{sentiment}\n\U0001F4C2 类型：{type_cn}\n\U0001F534 优先级：{priority}\n━━━━━━━━━━━━━━━━━━━━\n\U0001F4CC 场景：{scene or '未指定'}\n\U0001F4A1 核心功能：{'是' if core else '否'}\n\U0001F464 用户标签：{tag_str}\n\U0001F52E 隐含需求：{need}\n\U0001F3F7️ 来源：{source}"
+              return {
+                  'output': output,
+                  'problem_type': ptype,
+                  'sentiment': sentiment,
+                  'priority': priority,
+                  'user_tags': tag_str,
+                  'implicit_need': need,
+                  'is_core':core
+              }
+        code_language: python3
+        outputs:
+          core_functions:
+            children: null
+            type: string
+          reader_type:
+            children: null
+            type: string
+          scene:
+            children: null
+            type: string
+        selected: false
+        title: 场景JSON解析与更新
+        type: code
+        variables:
+        - value_selector:
+          - '1776665919302'
+          - text
+          value_type: string
+          variable: llm_output
+        - value_selector:
+          - conversation
+          - scene
+          value_type: string
+          variable: current_scene
+        - value_selector:
+          - conversation
+          - reader_type
+          value_type: string
+          variable: current_reader
+      height: 52
+      id: '1776668700002'
+      position:
+        x: 1730
+        y: 347
+      positionAbsolute:
+        x: 1730
+        y: 347
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: ✅ 已记录场景：{{#1776668700002.scene#}}，读者类型：{{#1776668700002.reader_type#}}。{{#1776668700002.core_functions#}}请粘贴PRD片段或用户反馈开始检查。
+        selected: false
+        title: 场景确认回复
+        type: answer
+        variables: []
+      height: 188
+      id: '1776665940760'
+      position:
+        x: 2638
+        y: 279
+      positionAbsolute:
+        x: 2638
+        y: 279
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: ⚠️ 请输入有效的待检查内容。你可以粘贴PRD片段或用户反馈让我检查，也可以告诉我你的行业类型。
+        selected: false
+        title: 无效输入回复
+        type: answer
+        variables: []
+      height: 132
+      id: '1776666037112'
+      position:
+        x: 1388
+        y: 497
+      positionAbsolute:
+        x: 1388
+        y: 497
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: |
+          import json
+          import csv
+          import re
+
+          def main(file_content: list) -> dict:
+              if not file_content:
+                  return {'output': json.dumps([]), 'total': 0}
+              if isinstance(file_content, str):
+                  file_content = [file_content]
+              if len(file_content) == 1 and isinstance(file_content[0], str):
+                  raw = file_content[0]
+                  if '\n' in raw or '\r' in raw:
+                      lines = raw.replace('\r\n', '\n').replace('\r', '\n').split('\n')
+                      file_content = [line.strip() for line in lines if line.strip()]
+                  else:
+                      file_content = [raw]
+              csv_headers = ['序号', '反馈内容', '问题类型', '情绪', '优先级', '隐含需求', '用户标签', '编号', '内容', '类型', '情感', '级别', '需求', '标签', 'id', 'content', 'type', 'sentiment', 'priority', 'need', 'tag', 'index', 'feedback', 'category', 'emotion', 'level', 'requirement', 'label', '品类', '场景', 'category', 'scene']
+              feedback_col_names = {'内容', '文本', '反馈内容', 'content', 'description', '评论', '描述', 'feedback', 'text', '用户反馈', 'comment'}
+
+              SCENE_CORE_MAP = {
+                  '电商': '搜索,购物车,下单,支付,退款,物流,评价,客服,商品,订单,优惠券,价格,会员,售后,发货,退货',
+                  '社交': '聊天,消息,好友,动态,评论,点赞,分享,群,朋友圈,私信,语音,视频,关注,粉丝,账号,登录',
+                  '金融': '转账,支付,余额,账单,还款,借款,理财,基金,股票,保险,信用,风控,银行卡,充值,提现',
+                  '教育': '课程,学习,作业,考试,成绩,老师,学生,班级,直播,录播,题库,练习,笔记,进度,证书',
+                  '外卖': '下单,配送,骑手,商家,餐品,订单,支付,退款,评价,客服,优惠券,红包,会员,地址',
+                  '出行': '打车,司机,路线,导航,地图,定位,行程,费用,支付,评价,客服,投诉,安全,紧急,拼车',
+                  '游戏': '登录,匹配,对战,充值,皮肤,英雄,角色,装备,技能,地图,服务器,延迟,卡顿,闪退,崩溃',
+                  '办公': '文档,表格,演示,协作,会议,日历,邮件,通讯录,审批,流程,项目,任务,日程,笔记,云盘',
+                  '医疗': '问诊,医生,处方,药品,挂号,预约,检查,报告,医保,支付,退款,评价,客服,投诉,推荐',
+                  '智能硬件': 'WiFi,蓝牙,配网,连接,固件,升级,地图,清扫,充电,回充,避障,吸力,噪音,续航,电池',
+                  '音乐': '播放,歌曲,歌单,搜索,推荐,下载,收藏,分享,歌词,音质,会员,付费,免费,广告,推送',
+              }
+
+              def detect_scene(text):
+                  best = ''
+                  best_score = 0
+                  for key, funcs in SCENE_CORE_MAP.items():
+                      kws = funcs.split(',')
+                      score = sum(1 for k in kws if k in text)
+                      if score > best_score:
+                          best_score = score
+                          best = key
+                  return best if best_score >= 1 else ''
+
+              def extract_tags(text):
+                  tags = []
+                  if re.search(r'(会员|VIP|充值|付费|订阅|充了|花钱)', text):
+                      tags.append('付费用户')
+                  if re.search(r'(刚买|刚注册|第一次用|新手)', text):
+                      tags.append('新用户')
+                  if re.search(r'(用了.*月|用了.*年|老用户|用了很久)', text):
+                      tags.append('老用户')
+                  return tags
+
+              def extract_need(text):
+                  mappings = [
+                      (r'每次都要(.{2,6})', '自动化'),
+                      (r'找不到(.{2,6})', '入口优化'),
+                      (r'太麻烦了|太复杂', '流程简化'),
+                      (r'能不能(加个|增加|支持)(.{2,8})', None),
+                      (r'希望(增加|支持|有)(.{2,8})', None),
+                      (r'噪音太大|太吵', '静音模式'),
+                      (r'充电太慢|充电.*慢', '快充'),
+                      (r'总是断连|断连', '连接稳定性'),
+                      (r'没有(.{2,6})模式', None),
+                  ]
+                  for pattern, need in mappings:
+                      m = re.search(pattern, text)
+                      if m:
+                          if need:
+                              return need
+                          groups = m.groups()
+                          if len(groups) >= 2 and groups[-1]:
+                              return groups[-1][:12]
+                          elif len(groups) >= 1 and groups[0]:
+                              return groups[0][:12]
+                  return '无'
+
+              def iron_classify(text):
+                  # iron_classify v1.0 2026-05
+                  # Priority rules aligned with knowledge base priority matrix
+                  func_high_kw = r'闪退|崩溃|死机|白屏|黑屏|变砖|支付失败|数据丢失|登录不上|账号被盗|隐私泄露'
+                  svc_high_kw = r'食品安全|异物|变质|寄生虫|吃出|拉肚子|食物中毒|发霉|馊了|臭了|不新鲜|拒赔|骑手态度|司机态度|等超久|自动续费|被欺骗|等了\d+分钟|等了\d+小时|没人接单|没接单|骚扰|威胁'
+                  perf_high_kw = r'发烫|不敢用|完全卡死|卡死'
+                  content_high_kw = r'虚假宣传|诈骗|假货|杀熟|刷.{0,1}评|假评|水军'
+                  irony_pos = ['太棒了', '绝了', '真厉害', '厉害了', '完美']
+                  irony_neg = ['闪退', '崩溃', '死机']
+                  if any(k in text for k in irony_pos) and any(k in text for k in irony_neg):
+                      return ('功能', '负向', '高')
+                  neg_ctx = ['但', '但是', '不过', '就是', '可惜', '然而', '只是', '可是', '虽然',
+                             '差评', '问题', '气愤', '威胁', '刷', '假', '骗', '坑', '垃圾', '太差',
+                             '不满', '投诉', '拒', '不解决', '不管']
+                  pos_words = ['很好', '好用', '专业', '不错', '很棒', '超好用',
+                               '体验很好', '给力', '真香', '效率提高', '帮助提高', '支持导出',
+                               '覆盖广', '很全', '很细', '很准', '很及时', '很方便', '很酷',
+                               '很震撼', '很到位', '准时送达', '好评']
+                  if any(k in text for k in pos_words):
+                      if not any(n in text for n in neg_ctx):
+                          return ('体验', '正向', '低')
+                  fixed_signals = ['修好了', '已解决', '已修复', '终于不', '终于没', '恢复正常',
+                                   '不再闪退', '不再崩溃', '不再报错']
+                  if any(k in text for k in fixed_signals):
+                      return None
+                  if re.search(r'能不能|希望|建议|想要|加个|能不能加', text):
+                      return ('体验', '中性', '低')
+                  true_crash = bool(re.search(
+                      r'闪退|崩溃|死机|白屏|黑屏|变砖|强制退出|ANR|'
+                      r'支付失败|扣款异常|重复扣款|数据丢失|登录不上|账号被盗|'
+                      r'隐私泄露|隐私暴露|不明扣款|'
+                      r'打不开|一片空白|404|'
+                      r'同步失败|数据异常|金额算错|乱码|订单消失|记录没了|聊天记录没了|'
+                      r'验证码收不到|注册失败|'
+                      r'被盗|被封|被限流|被禁言|被锁|封禁|风控|拦截|'
+                      r'没到账|不到账|钱没到|扣了钱|订单没生成|多扣|金额不对|账单不对|'
+                      r'账户限制|账户冻结|限制转账|限制提现|'
+                      r'没声音|播放不了|播放没声音|'
+                      r'恢复不了|恢复失败|'
+                      r'数据不同步|状态不同步|信息不同步|'
+                      r'升级失败|识别不了',
+                      text
+                  ))
+                  broad_func_failure = bool(re.search(
+                      r'闪退|崩溃|死机|白屏|黑屏|变砖|强制退出|ANR|'
+                      r'支付失败|扣款异常|重复扣款|数据丢失|登录不上|账号被盗|'
+                      r'隐私泄露|隐私暴露|不明扣款|'
+                      r'打不开|一片空白|404|'
+                      r'功能失效|没反应|报错|'
+                      r'上传失败|下载失败|保存失败|同步失败|'
+                      r'不能用|没法用|用不了|无响应|失效|失灵|'
+                      r'保存不了|传不了|下不了|载不出|'
+                      r'掉线|断连|无法连接|连不上|连接失败|断开|'
+                      r'验证码收不到|注册失败|'
+                      r'被盗|被封|被限流|被禁言|'
+                      r'数据异常|金额算错|乱码|订单消失|记录没了|聊天记录没了|'
+                      r'卡死无法|卡死不能|无法跳转|形同虚设|绕过|绕开|'
+                      r'被锁|锁了|封禁|解封|申诉|风控|拦截|'
+                      r'没到账|不到账|钱没到|扣了钱|订单没生成|'
+                      r'多扣|金额不对|账单不对|'
+                      r'没声音|播放不了|播放没声音|没声|'
+                      r'识别不通过|识别失败|'
+                      r'恢复不了|没恢复|恢复失败|'
+                      r'定位.{0,2}飘|定位.{0,2}偏|定位不准|定位偏差|'
+                      r'不见了|消失|丢失|'
+                      r'被举报|限制转账|限制提现|账户限制|账户冻结|'
+                      r'不工作|不运行|无法使用|不可用|'
+                      r'扣了.{0,4}费|扣了.{0,4}钱|'
+                      r'找不到了|显示空白|收藏夹空白|'
+                      r'数据不同步|状态不同步|信息不同步|'
+                      r'不执行|不生效|功能缺失|'
+                      r'识别率低|成功率太低|'
+                      r'误报|漏发|卡粮|'
+                      r'上不了网|'
+                      r'突然没了|突然.{0,2}没|'
+                      r'离线频繁|频繁.*掉线|'
+                      r'格式不对|出粮不均匀|'
+                      r'识别不了|不认了|'
+                      r'不支持|做不到|不能自定义|'
+                      r'识别不准|识别率太低|准确率太低|'
+                      r'升级失败|变砖',
+                      text
+                  ))
+                  pure_svc = ['骑手', '配送', '商家', '餐品', '食物', '外卖', '快递', '驿站', '快递柜', '包裹', '取件码', '送餐']
+                  has_pure_svc = any(k in text for k in pure_svc)
+                  ambig_svc = ['退款', '售后', '客服', '退货', '换货', '拒赔', '投诉', '举报', '物流', '发货', '报修', '物业', '保洁']
+                  has_ambig_svc = any(k in text for k in ambig_svc)
+                  has_driver = '司机' in text
+                  if has_pure_svc and broad_func_failure:
+                      if re.search(r'定位.{0,2}飘|定位.{0,2}偏|定位不准|定位偏差', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_pure_svc and not broad_func_failure:
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_driver and broad_func_failure:
+                      if re.search(r'扣了|扣费|取消费|扣款|多扣|不到账|没到账', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      if re.search(r'定位.{0,2}飘|定位.{0,2}偏|定位不准|定位偏差', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_driver and not broad_func_failure:
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if has_ambig_svc and true_crash:
+                      p = '高' if re.search(func_high_kw, text) else '中'
+                      return ('功能', '负向', p)
+                  if has_ambig_svc and broad_func_failure:
+                      strong_func_signals = bool(re.search(
+                          r'扣了钱|订单没生成|没到账|不到账|钱没到|多扣|金额不对|账单不对|'
+                          r'格式不对|变砖|升级失败|'
+                          r'数据异常|金额算错|乱码|订单消失|记录没了|'
+                          r'被锁|封禁|风控|拦截|账户限制|账户冻结|'
+                          r'打不开|一片空白|404|'
+                          r'识别不了|识别不通过',
+                          text
+                      ))
+                      if strong_func_signals:
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      return ('体验', '负向', '低')
+                  if broad_func_failure:
+                      has_perf = bool(re.search(
+                          r'卡顿|太卡了|很卡|变卡|不流畅|卡得|卡的要死|卡死了|卡的要命|'
+                          r'加载慢|启动慢|打开慢|响应慢|运行慢|'
+                          r'延迟高|网络延迟|高延迟|延迟太大|延迟严重|'
+                          r'耗电|费电|掉电快|发烫|过热|'
+                          r'掉帧|帧率低|不跟手|画面不流畅|'
+                          r'缓冲|转圈圈|一直转圈|loading|缓冲中|'
+                          r'占用高|内存高|资源占用|CPU高|'
+                          r'画面延迟|声音延迟|画面不同步|声音不同步',
+                          text
+                      ))
+                      if has_perf:
+                          if re.search(r'太慢.*用不了|用不了.*太慢|等\d+秒.*用不了|用不了.*等', text):
+                              p = '高' if re.search(perf_high_kw, text) else '中'
+                              return ('性能', '负向', p)
+                      p = '高' if re.search(func_high_kw, text) else '中'
+                      return ('功能', '负向', p)
+                  if re.search(r'(?:太|很|特别|变|更|越|也|都|还是|就是).*卡|卡(?:顿|住|得|的|了)', text):
+                      if not re.search(r'银行卡|打卡|会员卡|卡通|卡片|卡包', text):
+                          p = '高' if re.search(perf_high_kw, text) else '中'
+                          return ('性能', '负向', p)
+                  if re.search(r'(?:太|很|特别|更|越).*慢|慢(?:了|得|的)', text):
+                      if not re.search(r'回复.*慢|问诊|医生|客服.*慢|退款|售后|审核|物流|发货|配送', text):
+                          p = '高' if re.search(perf_high_kw, text) else '中'
+                          return ('性能', '负向', p)
+                  if re.search(r'启动.{0,3}\d+秒|启动要|打开要', text):
+                      return ('性能', '负向', '中')
+                  if '续航' in text:
+                      return ('性能', '负向', '中')
+                  if '假死' in text:
+                      return ('性能', '负向', '高')
+                  if '限速' in text:
+                      return ('性能', '负向', '中')
+                  if re.search(r'(?:资源|内存|CPU).*(?:占用|高|大|太多)', text):
+                      return ('性能', '负向', '中')
+                  if re.search(r'转.{0,3}圈', text):
+                      if not re.search(r'朋友圈|社交圈', text):
+                          return ('性能', '负向', '中')
+                  if re.search(r'手机.{0,3}烫|烫.{0,3}手', text):
+                      return ('性能', '负向', '高')
+                  if re.search(r'延迟.{0,4}(?:大|严重|高|太多)', text):
+                      if not re.search(r'数据.*延迟|汇率.*延迟|牌价.*延迟', text):
+                          return ('性能', '负向', '中')
+                  if re.search(r'不同步', text):
+                      if re.search(r'数据|状态|信息|订单|库存|记录', text):
+                          p = '高' if re.search(func_high_kw, text) else '中'
+                          return ('功能', '负向', p)
+                      if not re.search(r'字幕|歌词|翻译', text):
+                          return ('性能', '负向', '中')
+                  has_content_issue = bool(re.search(
+                      r'图文不符|描述不符|实物不符|货不对板|缺斤少两|'
+                      r'虚假宣传|夸大宣传|误导|标称|标示|'
+                      r'推荐不准|推荐不好|搜索不对|搜不到|搜出来不对|'
+                      r'匹配不公|匹配机制|算法有问题|'
+                      r'翻译错|字幕不同步|歌词延迟|歌词翻译不对|'
+                      r'内容过时|信息旧|攻略过时|信息过时|'
+                      r'数据有延迟|数据延迟|不准确|算错|'
+                      r'答案有错|题库.*错|'
+                      r'对不上|不准确',
+                      text
+                  ))
+                  if has_content_issue:
+                      p = '高' if re.search(content_high_kw, text) else '低'
+                      return ('内容', '负向', p)
+                  if re.search(r'数据.{0,2}延迟|汇率.*延迟|牌价.*延迟', text):
+                      return ('内容', '负向', '低')
+                  if '描述不符' in text or '实物不符' in text or '缺斤少两' in text:
+                      p = '高' if re.search(content_high_kw, text) else '低'
+                      return ('内容', '负向', p)
+                  if re.search(r'刷.{0,1}评|假评|水军|五星好评', text):
+                      return ('内容', '负向', '高')
+                  if re.search(r'信息过时|早就关门|攻略.*过时', text):
+                      return ('内容', '负向', '低')
+                  if re.search(r'材质.*不符|手感.*不一样', text):
+                      return ('内容', '负向', '低')
+                  if '杀熟' in text:
+                      return ('体验', '负向', '高')
+                  if re.search(r'关不掉|取消不了|停不了', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'审核不通过|审核.*拒绝', text):
+                      if re.search(r'流程|繁琐', text):
+                          return ('体验', '负向', '低')
+                      return ('功能', '负向', '中')
+                  if re.search(r'不能用|用不了|没法用', text):
+                      if re.search(r'更新|升级', text):
+                          return ('体验', '负向', '低')
+                      p = '高' if re.search(func_high_kw, text) else '中'
+                      return ('功能', '负向', p)
+                  if re.search(r'对不上', text):
+                      if re.search(r'数据|报表|销售额|财务|账', text):
+                          return ('内容', '负向', '低')
+                      return ('功能', '负向', '中')
+                  if re.search(r'不完整', text):
+                      if re.search(r'病历|检查结果|病历记录', text):
+                          return ('内容', '负向', '低')
+                      return ('功能', '负向', '中')
+                  if re.search(r'退款|售后|退货|换货|拒赔', text):
+                      p = '高' if '拒赔' in text else '低'
+                      return ('体验', '负向', p)
+                  if re.search(r'配送|骑手|司机|打车|叫车|网约车|顺风车|拼车|接单|接机', text):
+                      p = '高' if re.search(svc_high_kw, text) else '低'
+                      return ('体验', '负向', p)
+                  if '客服' in text:
+                      return ('体验', '负向', '低')
+                  if re.search(r'广告|推送|弹窗|开屏', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'太贵|涨价|价格|不值|性价比|抽奖|充更多', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'会员|VIP|付费|充值|续费|红包|权益', text):
+                      p = '高' if re.search(r'自动续费|被欺骗|骗', text) else '低'
+                      return ('体验', '负向', p)
+                  if re.search(r'找不到|复杂|麻烦|繁琐|难找|不方便|设置太深|隐私设置', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'定位不准|定位偏差', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'照片被压缩|画质.*变|压缩.*模糊', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'折叠|翻半天', text):
+                      return ('体验', '负向', '低')
+                  if '无法撤回' in text:
+                      return ('功能', '负向', '中')
+                  if re.search(r'账户.{0,2}限制|账户.{0,2}冻结|限制.*转账|限制.*提现', text):
+                      return ('功能', '负向', '高')
+                  if re.search(r'额度太低|额度不够', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'到店.*没房|预订.*没房|没房了', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'没人接单|没接单', text):
+                      return ('体验', '负向', '高')
+                  if re.search(r'次日达|等了\d+天|等了\d+分钟', text):
+                      return ('体验', '负向', '高')
+                  if re.search(r'规则不透明|不透明', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'威胁|骚扰|疯狂打电话', text):
+                      return ('体验', '负向', '高')
+                  if re.search(r'重影|竖条|刮痕|显示屏', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'运费|退货.*运费', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'功能臃肿|臃肿|花里胡哨', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'bug|Bug|BUG', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'崩了|大面积故障|服务异常', text):
+                      return ('功能', '负向', '高')
+                  if re.search(r'识别为外出|打卡.*迟到|打卡.*外勤', text):
+                      return ('功能', '负向', '中')
+                  if re.search(r'付费推广|前五页', text):
+                      return ('体验', '负向', '低')
+                  if re.search(r'已读回执|已读', text):
+                      return ('体验', '中性', '低')
+                  return None
+
+                  def apply_priority_rules(text, ptype, priority):
+                  # apply_priority_rules v1.0 2026-05
+                  # KB Section 四: mitigation downgrade + severity boost + core function boost
+                  mitigation_kw = r'偶尔|有时|不影响使用|但整体|但基本|还行|勉强|凑合|一般般|还能用|将就|忍了|可以接受'
+                  no_downgrade_kw = r'闪退|崩溃|死机|数据丢失|支付失败|安全漏洞|食品安全|异物|变质|被欺骗|自动续费|虚假宣传|严重|根本|完全|一直|突然|受不了|忍不了|急用|关键|全错过|没法用|没法玩|没法看|靠不住|来不及'
+                  if re.search(mitigation_kw, text) and not re.search(no_downgrade_kw, text):
+                      if priority == '高':
+                          priority = '中'
+                      elif priority == '中':
+                          priority = '低'
+                  if ptype == '性能' and priority == '中':
+                      perf_severe_kw = r'严重|根本|完全|一直|突然|太慢|太卡|太大|太短|太严重|很严重|没法|不敢|靠不住|错过|来不及|没法用|没法玩|没法看|受不了|忍不了|急用|关键|全错过|全没了|耽误|废了|毁了|完蛋|崩溃边缘|用不下去|没法工作|没法学习|影响工作|影响学习|断断续续|越来越差|越来越慢|越来越卡|不同步|对不上|等不起|等不了|等不及|太可怕|太吓人|太离谱|太夸张|太差了|太烂了|太垃圾|太恶心|太烦人|太讨厌|太糟糕|太差劲'
+                      if re.search(perf_severe_kw, text):
+                          priority = '高'
+                  if ptype == '功能' and priority == '中':
+                      core_func_kw = r'支付|登录|下单|订单|转账|账户|交易|充值|提现|扣款|付款|退款|到账|余额|账单|注册|认证|安全|隐私|数据|同步|备份|导出|播放|上传|下载|发送|接收|消息|通知|会员|订阅|续费|匹配|导航|定位|预订|叫车|打车|挂号|问诊|处方|搜索|收藏|评论|分享|点赞|关注|直播|视频|语音|通话|打卡|签到|积分|优惠券|红包|取消|路线|行程|配送|物流|发货|收货|库存|售后|客服|菜单|购物车|商品|秒杀|抽卡|存档|联机|组队|更新|升级|安装|卸载|绑定|解绑|实名|验证|密码|短信|邮箱|手机|人脸|指纹|识别|验证码|注册|注销|激活|开通|关闭|暂停|恢复|重置|修改|变更|迁移|导入|导出|备份|还原|同步|合并|拆分|排序|筛选|过滤|分类|标签|标记|收藏|点赞|评论|回复|转发|分享|举报|投诉|反馈|建议|意见|评价|评分|打分|投票|问卷|调查|调研|测试|试用|体验|预览|演示|展示|推荐|推送|通知|提醒|消息|私信|聊天|对话|会话|通话|视频|语音|直播|播放|暂停|停止|快进|快退|跳过|循环|随机|顺序|列表|歌单|专辑|歌手|歌曲|音乐|音频|声音|音量|音质|音效|均衡|歌词|字幕|翻译|配音|解说|讲解|教程|课程|学习|培训|教育|考试|测验|作业|任务|项目|计划|日程|日历|时间|日期|提醒|闹钟|计时|倒计|秒表|计算|换算|汇率|单位|长度|重量|温度|天气|地图|导航|路线|交通|公交|地铁|火车|飞机|酒店|民宿|景点|门票|攻略|游记|签证|护照|保险|医疗|健康|运动|健身|跑步|骑行|游泳|瑜伽|冥想|睡眠|饮食|营养|食谱|菜谱|烹饪|烘焙|甜点|饮品|咖啡|茶|酒|饮料|水果|蔬菜|肉类|海鲜|零食|小吃|外卖|配送|快递|物流|包裹|邮件|短信|电话|通讯|联系|地址|位置|坐标|经纬|海拔|高度|深度|距离|面积|体积|重量|温度|湿度|气压|风速|风向|降水|天气|气候|环境|生态|自然|动物|植物|生物|化学|物理|数学|统计|概率|逻辑|推理|判断|决策|选择|优化|改进|提升|增强|强化|学习|训练|练习|复习|预习|准备|计划|安排|组织|管理|领导|指挥|协调|沟通|交流|合作|协作|团队|小组|部门|公司|企业|组织|机构|单位|学校|医院|银行|政府|军队|警察|消防|急救|救援|应急|危机|风险|安全|保护|防护|防御|攻击|入侵|病毒|木马|蠕虫|间谍|黑客|破解|盗版|侵权|抄袭|剽窃|伪造|假冒|欺诈|诈骗|欺骗|误导|虚假|不实|谣言|传言|传闻|消息|新闻|资讯|信息|数据|资料|文件|文档|报告|报表|图表|图形|图像|图片|照片|视频|音频|音乐|歌曲|电影|电视|节目|频道|电台|广播|直播|点播|回放|录播|转播|重播|复播|首播|首映|首演|首秀|首发|首测|首试|首用|首购|首付|首贷|首保|首赔|首付|首期|首批|首次|第一|第二|第三|最后|最终|终极|结束|完成|成功|失败|错误|异常|故障|问题|缺陷|漏洞|补丁|更新|升级|版本|发布|上线|下线|停服|维护|修复|优化|改进|提升|增强|强化|新增|增加|添加|删除|移除|取消|关闭|暂停|停止|终止|结束|完成|成功|失败|错误|异常|故障|问题|缺陷|漏洞|补丁|更新|升级|版本|发布|上线|下线|停服|维护|修复|优化|改进|提升|增强|强化|新增|增加|添加|删除|移除|取消|关闭|暂停|停止|终止|结束|完成|成功|失败|错误|异常|故障|问题|缺陷|漏洞|补丁|更新|升级|版本|发布|上线|下线|停服|维护|修复|优化|改进|提升|增强|强化|限流|求助|联动|离线|误报|失控|云台|避障|跟随|追踪|手柄|配对|传感器|摄像头|无人机|抖动|悬停|图传|飞行|一键|多设备|执行|遥控器|空调|手表|震动|推送|续航|丢失|重新配对|失控|撞|坏了|失效|不执行|不工作|不运行|形同虚设|飘|偏|延迟|卡顿|卡死|闪退|崩溃|死机|白屏|黑屏|变砖|强制退出|ANR|扣款异常|重复扣款|不明扣款|打不开|一片空白|404|同步失败|数据异常|金额算错|乱码|订单消失|记录没了|聊天记录没了|验证码收不到|注册失败|被盗|被封|被限流|被禁言|被锁|封禁|风控|拦截|没到账|不到账|钱没到|扣了钱|订单没生成|多扣|金额不对|账单不对|没声音|播放不了|播放没声音|恢复不了|恢复失败|数据不同步|状态不同步|信息不同步|升级失败|识别不了|识别不通过|识别失败|定位飘|定位偏|定位不准|定位偏差|不见了|消失|丢失|被举报|限制转账|限制提现|账户限制|账户冻结|不工作|不运行|无法使用|不可用|扣了费|扣了钱|找不到了|显示空白|收藏夹空白|不执行|不生效|功能缺失|识别率低|成功率太低|误报|漏发|卡粮|上不了网|突然没了|离线频繁|频繁掉线|格式不对|出粮不均匀|不认了|不支持|做不到|不能自定义|识别不准|识别率太低|准确率太低|升级失败|变砖|关不掉|取消不了|停不了|无法撤回|紧急|求助|报警|SOS|求救|危险'
+                      if re.search(core_func_kw, text):
+                          priority = '高'
+                  if ptype == '体验' and priority == '低':
+                      exp_moderate_kw = r'涨了|翻倍|全是|根本|一直|太慢|太复杂|太繁琐|藏得|找不到|不解决|不处理|没人|不理|不管|骗|虚假|陷阱|套路|坑|差|烂|垃圾|恶心|气死|气炸|火大|无语|失望|寒心|过分|离谱|坑爹|坑人|霸王|欺负|歧视|区别对待|不公平|不一致|不一样|差太多|差远了|差很大|天差地别|趁火打劫|坐地起价|乱收费|多收费|重复收费|隐藏费用|强制消费|捆绑销售|诱导消费|虚假促销|虚假优惠|先涨后降|明降暗涨|货不对板|缺斤少两|以次充好|偷工减料|敷衍|推诿|踢皮球|不负责|不作为|不专业|不礼貌|态度恶劣|态度差|骂人|辱骂|威胁|恐吓|骚扰|疯狂|不停|一直打|轰炸|\d+天|一个月|开不了|看不懂|不灵活|不好用|不完整|不齐全|不全面|不详细|不准确|不靠谱|不放心|不踏实|不安心|不省心|担心|害怕|焦虑|着急|急死了|等不及|等不了|等不起|耗不起|耽误事|误事|坏事|出事|危险|风险|隐患|漏洞|缺陷|毛病|问题多|问题大|问题严重|频繁|经常|总是|老是|动不动|三天两头|隔三差五|没完没了|无休止|无止境|没个头|没完|不停|不断|连续|持续|反复|一再|多次|好几次|无数次|数不清|记不清|麻木|无奈|无力|无助|绝望|崩溃|疯了|受不了|忍不了|忍无可忍|不能再忍|忍到极限|极限|底线|红线|原则|尊严|人格|人权|权益|利益|损失|损害|伤害|受伤|受害|吃亏|上当|被骗|被坑|被宰|被割|被收割|被薅|被薅羊毛|被套路|被算计|被利用|被消费|被浪费|被耽误|被拖累|被连累|被牵连|被影响|被干扰|被打扰|被骚扰|被侵犯|被侵害|被损害|被破坏|被毁|被毁掉|被毁灭|被摧毁|被粉碎|被打破|被打乱|被搞乱|被弄乱|被搅乱|被扰乱|被干扰|被打断|被中断|被终止|被停止|被暂停|被取消|被关闭|被封锁|被屏蔽|被过滤|被审查|被监控|被跟踪|被监视|被监听|被偷窥|被偷看|被偷听|被偷拍|被偷录|被偷窃|被盗取|被盗用|被冒用|被冒充|被伪造|被篡改|被修改|被删除|被移除|被清空|被清零|被归零|被抹去|被抹掉|被擦除|被消除|被消灭|被抹杀|被扼杀|被扼制|被压制|被压抑|被抑制|被限制|被约束|被束缚|被捆绑|被绑架|被挟持|被威胁|被恐吓|被吓唬|被吓到|被吓坏|被吓傻|被吓呆|被吓懵|被吓晕|被吓死|被吓跑|被吓退|被吓走|被吓逃|被吓躲|被吓藏|被吓缩'
+                      if re.search(exp_moderate_kw, text):
+                          priority = '中'
+                  if ptype == '内容' and priority == '低':
+                      cnt_moderate_kw = r'完全|根本|太不|严重|错误|不对|过时|不一样|不一致|不公平|没法玩|没法用|全是|一直|骗|假|虚假|误导|不实|伪造|假冒|抄袭|剽窃|盗版|侵权|刷评|水军|假评'
+                      if re.search(cnt_moderate_kw, text):
+                          priority = '中'
+                  return priority
+
+              def is_header_row(text):
+                  t = text.strip().strip(',').strip('|').strip()
+                  t = t.lstrip('\ufeff')
+                  if not t:
+                      return True
+                  clean = t.replace(' ', '').replace('|', '')
+                  if clean.startswith('---') or clean.startswith('===') or clean.startswith('+++'):
+                      return True
+                  if re.match(r'^[-=+]{3,}$', clean):
+                      return True
+                  parts = [p.strip().lstrip('\ufeff') for p in t.replace('|', ',').split(',') if p.strip()]
+                  if len(parts) >= 2:
+                      header_count = sum(1 for p in parts if p in csv_headers)
+                      if header_count >= 2:
+                          return True
+                  return False
+
+              def flatten_to_lines(file_content):
+                  lines = []
+                  for item in file_content:
+                      text = str(item).strip().lstrip('\ufeff')
+                      if not text:
+                          continue
+                      if '\n' in text:
+                          for line in text.split('\n'):
+                              line = line.strip().lstrip('\ufeff')
+                              if line:
+                                  lines.append(line)
+                      else:
+                          lines.append(text)
+                  return lines
+
+              def extract_feedback_text(line, header_fields, feedback_col_idx):
+                  sep = ','
+                  if '|' in line and line.strip().count('|') >= 2:
+                      sep = '|'
+                  if sep == '|':
+                      parts = [p.strip() for p in line.strip('|').split('|') if p.strip()]
+                  else:
+                      try:
+                          parsed = list(csv.reader([line]))
+                          parts = parsed[0] if parsed else [line]
+                      except Exception:
+                          parts = [p.strip() for p in line.split(',') if p.strip()]
+                  if feedback_col_idx is not None and feedback_col_idx < len(parts):
+                      val = parts[feedback_col_idx].strip()
+                      if val:
+                          return val
+                  if len(parts) >= 2:
+                      for i, val in enumerate(parts):
+                          val = val.strip()
+                          if val and not val.isdigit():
+                              return val
+                      return parts[1].strip()
+                  return line.strip()
+
+              all_lines = flatten_to_lines(file_content)
+
+              header_line = None
+              header_fields = []
+              feedback_col_idx = None
+              data_lines = []
+
+              for line in all_lines:
+                  if is_header_row(line) and header_line is None:
+                      header_line = line
+                      line_clean = line.strip('|').strip().lstrip('\ufeff')
+                      sep = ','
+                      if '|' in line_clean and line_clean.count('|') >= 2:
+                          sep = '|'
+                      if sep == '|':
+                          header_fields = [f.strip() for f in line_clean.strip('|').split('|') if f.strip()]
+                      else:
+                          try:
+                              parsed = list(csv.reader([line_clean]))
+                              if parsed:
+                                  header_fields = [f.strip() for f in parsed[0]]
+                          except Exception:
+                              header_fields = [f.strip() for f in line_clean.replace('|', ',').split(',') if f.strip()]
+                      for i, h in enumerate(header_fields):
+                          if h in feedback_col_names:
+                              feedback_col_idx = i
+                              break
+                  elif not is_header_row(line):
+                      data_lines.append(line)
+
+              results = []
+              for idx, line in enumerate(data_lines, 1):
+                  if header_fields:
+                      feedback_text = extract_feedback_text(line, header_fields, feedback_col_idx)
+                  else:
+                      parts = list(csv.reader([line]))
+                      if parts and len(parts[0]) >= 2:
+                          candidates = [p.strip() for p in parts[0] if p.strip() and not p.strip().isdigit()]
+                          feedback_text = candidates[0] if candidates else line
+                      else:
+                          feedback_text = line
+
+                  if not feedback_text:
+                      continue
+
+                  iron_priority = None
+                  result = iron_classify(feedback_text)
+                  if result:
+                      ptype, sentiment, iron_priority = result
+                      priority = iron_priority if iron_priority is not None else '低'
+                      priority = apply_priority_rules(feedback_text, ptype, priority)
+                  else:
+                      ptype = '体验'
+                      sentiment = '中性'
+                      priority = '低'
+
+                  scene = detect_scene(feedback_text)
+                  tags = extract_tags(feedback_text)
+                  need = extract_need(feedback_text)
+                  results.append({
+                      "index": idx,
+                      "text": feedback_text[:100],
+                      "problem_type": ptype,
+                      "sentiment": sentiment,
+                      "priority": priority,
+                      "scene": scene,
+                      "user_tags": ', '.join(tags) if tags else '无',
+                      "implicit_need": need
+                  })
+
+              return {
+                  "output": json.dumps(results, ensure_ascii= False),
+                  "total": len(results)
+              }
+        code_language: python3
+        outputs:
+          output:
+            children: null
+            type: string
+          total:
+            children: null
+            type: number
+        selected: false
+        title: 批量分类
+        type: code
+        variables:
+        - value_selector:
+          - '1776680000004'
+          - text
+          value_type: array[string]
+          variable: file_content
+      height: 52
+      id: '1776680000001'
+      position:
+        x: 2638
+        y: 108
+      positionAbsolute:
+        x: 2638
+        y: 108
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: |
+          import json
+          import csv
+          import io
+
+          def main(batch_output: str, total: int) -> dict:
+              if not batch_output:
+                  return {'output': '⚠️ 未接收到分类结果'}
+
+              items = []
+              try:
+                  data = json.loads(str(batch_output))
+                  if isinstance(data, list):
+                      items = data
+              except (json.JSONDecodeError, TypeError):
+                  pass
+
+              if not items:
+                  return {'output': '⚠️ 无法解析分类结果，请确保上传了有效文件'}
+
+              type_map = {'功能': '功能问题', '性能': '性能问题', '体验': '体验问题', '内容': '内容问题'}
+              for item in items:
+                  item['type_cn'] = type_map.get(item.get('problem_type', ''), item.get('problem_type', ''))
+
+              total = len(items)
+              type_counts = {}
+              sentiment_counts = {}
+              priority_counts = {}
+              for item in items:
+                  t = item.get('type_cn', '')
+                  type_counts[t] = type_counts.get(t, 0) + 1
+                  s = item.get('sentiment', '')
+                  sentiment_counts[s] = sentiment_counts.get(s, 0) + 1
+                  p = item.get('priority', '')
+                  priority_counts[p] = priority_counts.get(p, 0) + 1
+
+              high_items = [i for i in items if i.get('priority') == '高']
+
+              csv_buf = io.StringIO()
+              csv_writer = csv.writer(csv_buf)
+              csv_writer.writerow(['序号', '反馈内容', '问题类型', '情绪', '优先级', '场景', '隐含需求', '用户标签'])
+              for item in items:
+                  csv_writer.writerow([
+                      item.get('index', ''),
+                      item.get('text', ''),
+                      item.get('type_cn', ''),
+                      item.get('sentiment', ''),
+                      item.get('priority', ''),
+                      item.get('scene', ''),
+                      item.get('implicit_need', '') if item.get('implicit_need') and item['implicit_need'] != '无' else '',
+                      item.get('user_tags', '') if item.get('user_tags') and item['user_tags'] != '无' else ''
+                  ])
+              csv_content = csv_buf.getvalue()
+
+              report = []
+              report.append(f'## 📊 统计摘要（共{total}条）')
+              report.append('')
+              report.append(f'**总计：{total} 条反馈**')
+              report.append('')
+
+              report.append('━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+              report.append('### 问题类型分布')
+              for t in ['功能问题', '性能问题', '体验问题', '内容问题']:
+                  c = type_counts.get(t, 0)
+                  pct = c / total * 100 if total > 0 else 0
+                  bar = '█' * int(pct / 5) + '░' * (20 - int(pct / 5))
+                  report.append(f'- {t}：{c}条 ({pct:.1f}%) {bar}')
+              report.append('')
+
+              report.append('### 情绪分布')
+              for s in ['负向', '中性', '正向']:
+                  c = sentiment_counts.get(s, 0)
+                  pct = c / total * 100 if total > 0 else 0
+                  bar = '█' * int(pct / 5) + '░' * (20 - int(pct / 5))
+                  report.append(f'- {s}：{c}条 ({pct:.1f}%) {bar}')
+              report.append('')
+
+              report.append('### 优先级分布')
+              for p, emoji in [('高', '🔴'), ('中', '🟡'), ('低', '🟢')]:
+                  c = priority_counts.get(p, 0)
+                  pct = c / total * 100 if total > 0 else 0
+                  bar = '█' * int(pct / 5) + '░' * (20 - int(pct / 5))
+                  report.append(f'- {emoji}{p}：{c}条 ({pct:.1f}%) {bar}')
+              report.append('━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+
+              if high_items:
+                  report.append('')
+                  report.append(f'### ⚠️ 高优先级反馈（{len(high_items)}条）')
+                  for item in high_items[:30]:
+                      report.append(f'- [{item.get("type_cn", "")}] {item.get("text", "")}')
+                  if len(high_items) > 30:
+                      report.append(f'- ... 还有{len(high_items) - 30}条高优先级反馈')
+
+              report.append('')
+              report.append('---')
+              report.append('')
+              report.append('## 📋 逐条标注结果')
+              report.append('')
+              report.append('| 序号 | 反馈内容 | 问题类型 | 情绪 | 优先级 | 场景 | 隐含需求 | 用户标签 |')
+              report.append('| --- | --- | --- | --- | --- | --- | --- | --- |')
+              for item in items:
+                  need_str = item.get('implicit_need', '') if item.get('implicit_need') and item['implicit_need'] != '无' else ''
+                  tag_str = item.get('user_tags', '') if item.get('user_tags') and item['user_tags'] != '无' else ''
+                  scene_str = item.get('scene', '')
+                  text_esc = item.get('text', '').replace('|', '｜')
+                  report.append(f'| {item.get("index", "")} | {text_esc} | {item.get("type_cn", "")} | {item.get("sentiment", "")} | {item.get("priority", "")} | {scene_str} | {need_str} | {tag_str} |')
+
+              report.append('')
+              report.append('---')
+              report.append('')
+              report.append('## 📥 导出数据')
+              report.append('')
+              report.append('复制以下CSV内容，粘贴到记事本保存为 `.csv` 文件，即可用Excel打开：')
+              report.append('')
+              report.append('```csv')
+              report.append(csv_content.strip())
+              report.append('```')
+              report.append('')
+              report.append('💡 如需对某条反馈做更精确的分类，请单独粘贴该条内容。')
+
+              return {'output': '\n'.join(report)}
+        code_language: python3
+        outputs:
+          output:
+            children: null
+            type: string
+        selected: false
+        title: 批量结果汇总
+        type: code
+        variables:
+        - value_selector:
+          - '1776680000001'
+          - output
+          value_type: string
+          variable: batch_output
+        - value_selector:
+          - '1776680000001'
+          - total
+          value_type: number
+          variable: total
+      height: 52
+      id: '1776680000002'
+      position:
+        x: 2980
+        y: 108
+      positionAbsolute:
+        x: 2980
+        y: 108
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1776680000002.output#}}'
+        selected: false
+        title: 批量结果输出
+        type: answer
+        variables: []
+      height: 103
+      id: '1776680000003'
+      position:
+        x: 3322
+        y: 82
+      positionAbsolute:
+        x: 3322
+        y: 82
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: |
+          import json
+          import csv
+          import io
+
+          def main(batch_output: str, total: int) -> dict:
+              if not batch_output:
+                  return {'output': '⚠️ 未接收到分类结果'}
+
+              items = []
+              try:
+                  data = json.loads(str(batch_output))
+                  if isinstance(data, list):
+                      items = data
+              except (json.JSONDecodeError, TypeError):
+                  pass
+
+              if not items:
+                  return {'output': '⚠️ 无法解析分类结果，请确保上传了有效文件'}
+
+              type_map = {'功能': '功能问题', '性能': '性能问题', '体验': '体验问题', '内容': '内容问题'}
+              for item in items:
+                  item['type_cn'] = type_map.get(item.get('problem_type', ''), item.get('problem_type', ''))
+
+              total = len(items)
+              type_counts = {}
+              sentiment_counts = {}
+              priority_counts = {}
+              for item in items:
+                  t = item.get('type_cn', '')
+                  type_counts[t] = type_counts.get(t, 0) + 1
+                  s = item.get('sentiment', '')
+                  sentiment_counts[s] = sentiment_counts.get(s, 0) + 1
+                  p = item.get('priority', '')
+                  priority_counts[p] = priority_counts.get(p, 0) + 1
+
+              high_items = [i for i in items if i.get('priority') == '高']
+
+              csv_buf = io.StringIO()
+              csv_writer = csv.writer(csv_buf)
+              csv_writer.writerow(['序号', '反馈内容', '问题类型', '情绪', '优先级', '场景', '隐含需求', '用户标签'])
+              for item in items:
+                  csv_writer.writerow([
+                      item.get('index', ''),
+                      item.get('text', ''),
+                      item.get('type_cn', ''),
+                      item.get('sentiment', ''),
+                      item.get('priority', ''),
+                      item.get('scene', ''),
+                      item.get('implicit_need', '') if item.get('implicit_need') and item['implicit_need'] != '无' else '',
+                      item.get('user_tags', '') if item.get('user_tags') and item['user_tags'] != '无' else ''
+                  ])
+              csv_content = csv_buf.getvalue()
+
+              report = []
+              report.append(f'## 📊 统计摘要（共{total}条）')
+              report.append('')
+              report.append(f'**总计：{total} 条反馈**')
+              report.append('')
+
+              report.append('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+              report.append('### 问题类型分布')
+              for t in ['功能问题', '性能问题', '体验问题', '内容问题']:
+                  c = type_counts.get(t, 0)
+                  pct = c / total * 100 if total > 0 else 0
+                  bar = '█' * int(pct / 5) + '░' * (20 - int(pct / 5))
+                  report.append(f'- {t}：{c}条 ({pct:.1f}%) {bar}')
+              report.append('')
+
+              report.append('### 情绪分布')
+              for s in ['负向', '中性', '正向']:
+                  c = sentiment_counts.get(s, 0)
+                  pct = c / total * 100 if total > 0 else 0
+                  bar = '█' * int(pct / 5) + '░' * (20 - int(pct / 5))
+                  report.append(f'- {s}：{c}条 ({pct:.1f}%) {bar}')
+              report.append('')
+
+              report.append('### 优先级分布')
+              for p, emoji in [('高', '🔴'), ('中', '🟡'), ('低', '🟢')]:
+                  c = priority_counts.get(p, 0)
+                  pct = c / total * 100 if total > 0 else 0
+                  bar = '█' * int(pct / 5) + '░' * (20 - int(pct / 5))
+                  report.append(f'- {emoji}{p}：{c}条 ({pct:.1f}%) {bar}')
+              report.append('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━')
+
+              if high_items:
+                  report.append('')
+                  report.append(f'### ⚠️ 高优先级反馈（{len(high_items)}条）')
+                  for item in high_items[:30]:
+                      report.append(f'- [{item.get("type_cn", "")}] {item.get("text", "")}')
+                  if len(high_items) > 30:
+                      report.append(f'- ... 还有{len(high_items) - 30}条高优先级反馈')
+
+              report.append('')
+              report.append('---')
+              report.append('')
+              report.append('## 📋 逐条标注结果')
+              report.append('')
+              report.append('| 序号 | 反馈内容 | 问题类型 | 情绪 | 优先级 | 场景 | 隐含需求 | 用户标签 |')
+              report.append('| --- | --- | --- | --- | --- | --- | --- | --- |')
+              for item in items:
+                  need_str = item.get('implicit_need', '') if item.get('implicit_need') and item['implicit_need'] != '无' else ''
+                  tag_str = item.get('user_tags', '') if item.get('user_tags') and item['user_tags'] != '无' else ''
+                  scene_str = item.get('scene', '')
+                  text_esc = item.get('text', '').replace('|', '｜')
+                  report.append(f'| {item.get("index", "")} | {text_esc} | {item.get("type_cn", "")} | {item.get("sentiment", "")} | {item.get("priority", "")} | {scene_str} | {need_str} | {tag_str} |')
+
+              report.append('')
+              report.append('---')
+              report.append('')
+              report.append('## 📥 导出数据')
+              report.append('')
+              report.append('复制以下CSV内容，粘贴到记事本保存为 `.csv` 文件，即可用Excel打开：')
+              report.append('')
+              report.append('```csv')
+              report.append(csv_content.strip())
+              report.append('```')
+              report.append('')
+              report.append('💡 如需对某条反馈做更精确的分类，请单独粘贴该条内容。')
+
+              return {'output': '\n'.join(report)}
+        code_language: python3
+        outputs:
+          formatted_output:
+            children: null
+            type: string
+          total:
+            children: null
+            type: number
+        selected: false
+        title: PRD批量格式化
+        type: code
+        variables:
+        - value_selector:
+          - '1776680000007'
+          - text
+          value_type: array[string]
+          variable: file_content
+      height: 52
+      id: '1776680000005'
+      position:
+        x: 1730
+        y: 735
+      positionAbsolute:
+        x: 1730
+        y: 735
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        dataset_ids:
+        - wgCVTKOew1MVUS8jx5j9Ljn9irA4RHAgVG+eK+rGfqe0aZmPCYhvoiuyDGFdD8u7
+        query_attachment_selector: []
+        query_variable_selector:
+        - '1776648944081'
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: deepseek-chat
+            provider: langgenius/deepseek/deepseek
+        title: 📚知识库-PRD规范检查(批量)
+        type: knowledge-retrieval
+      height: 90
+      id: '1776690000003'
+      position:
+        x: 2072
+        y: 716
+      positionAbsolute:
+        x: 2072
+        y: 716
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1776690000003'
+          - result
+        memory:
+          query_prompt_template: |-
+            {{#sys.query#}}
+            {{#1776680000005.formatted_output#}}
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0.1
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: batch-prd-system-001
+          role: system
+          text: |-
+            你是 SpecMark，产品规范标记工具。你正在批量检查多条PRD。
+
+            ## 关键认知（必须遵守）
+            场景错配P1仅适用于ToB专属业务术语（多租户/SSO/RBAC/审批流/部门管理/组织架构/角色权限）。以下技术实现术语不是ToB专属术语，绝对不可判为场景错配🔴高，必须标注为⚠️未收录术语🟡中：Webhook、OAuth2.0、API、CDN、Redis、MySQL、微服务、Token、SDK、REST、GraphQL、WebSocket
+
+            ## 当前场景
+            行业/产品类型：{{#conversation.scene#}}
+            读者类型：{{#conversation.reader_type#}}
+
+            ## 批量检查规则
+            用户会提供多条PRD，每条以 === PRD #N === 分隔。你必须逐条检查每条PRD，对每条分别输出检查结果。
+
+            ## 检查维度（按优先级从高到低输出）
+            | 优先级 | 维度 | 判定标准 |
+            |--------|------|----------|
+            | P1 | 场景错配 | ToC产品出现ToB专属术语（多租户/SSO/RBAC/审批流/部门管理/组织架构/角色权限等）。注意：Webhook/OAuth2.0/API/CDN等技术实现术语不属于ToB专属术语，应标注为未收录术语⚠️🟡中 |
+            | P1 | 埋点违规 | 一个行为一个事件，未用通用事件+动态参数模式 |
+            | P2 | 数据无来源 | 数据类内容未标注出处 |
+            | P3 | 缺少异常处理 | 只写了正常流程，未考虑异常分支 |
+            | P4 | 验收标准模糊 | 「功能正常运行」「体验流畅」等模糊表述 |
+            | P5 | 需求不可量化 | 「提升用户体验」「优化性能」无量化指标 |
+
+            ## 输出格式（对每条PRD分别输出）
+            ### PRD #N
+            【风险点】：[具体问题]
+            【位置】：[引用原文片段，超过50字用…截断]
+            【风险等级】：🔴高 / 🟡中 / 🟢低
+            【修改建议】：[关键词或短语，不超过15字]
+            【行业参考】：[知识库中有则输出，无则省略此行]
+            若该条PRD无风险，输出：✅ 未检测到规范风险
+
+            ## 输出规则
+            - 每条PRD必须独立检查，不可遗漏任何一条
+            - 若多个风险指向同一处，合并为一条，等级取最高
+            - 遇到未收录术语（不在黑名单中但属于技术术语，如Webhook/OAuth2.0/API/CDN等），标注「⚠️ 该术语未收录，请人工确认」，等级🟡中
+            - 灰名单术语（技术实现术语，不可判为场景错配🔴高）：Webhook、OAuth2.0、API、CDN、Redis、MySQL、微服务、Token、SDK
+            - 短PRD/草稿片段必须逐维度检查P1-P5
+            - 一句话PRD至少检查P1场景错配、P3缺少异常处理、P4验收标准模糊、P5需求不可量化
+
+            ## 知识库参考
+            以下知识库内容已自动注入上下文，请参考相关规则进行检查。
+
+            ## 禁止事项
+            - 禁止替用户重写PRD
+            - 禁止提供完整修改版
+            - 禁止追问「是否需要展开」
+        - id: batch-prd-user-001
+          role: user
+          text: '{{#sys.query#}}\n\n{{#1776680000005.formatted_output#}}'
+        selected: false
+        structured_output_enabled: false
+        title: PRD批量检查
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1776680000006'
+      position:
+        x: 2414
+        y: 717
+      positionAbsolute:
+        x: 2414
+        y: 717
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: |
+          import re
+          from collections import Counter
+
+          def main(llm_output: str) -> dict:
+              try:
+                  if not llm_output or not str(llm_output).strip():
+                      return {
+                          'output': '⚠️ 未获取到检查结果，请重新提交。'
+                      }
+
+                  llm_output = str(llm_output)
+
+                  if '📋 Jira任务格式' in llm_output or 'Jira任务格式' in llm_output:
+                      return {
+                          'output': llm_output
+                      }
+
+                  if '✅ 未检测到规范风险' in llm_output:
+                      return {
+                          'output': llm_output
+                      }
+
+                  risk_pattern = r'【风险点】：(.+?)\n【位置】：(.+?)\n【风险等级】：(.+?)\n【修改建议】：(.+?)$'
+                  risks = re.findall(risk_pattern, llm_output, re.MULTILINE)
+
+                  if not risks:
+                      return {
+                          'output': llm_output + '\n\n📋 Jira任务格式：\n（未检测到标准格式风险点，请人工复核）'
+                      }
+
+                  risk_type_keywords = {
+                      '场景错配': ['场景错配', 'ToB专属', '多租户', 'SSO', 'RBAC'],
+                      '埋点违规': ['埋点'],
+                      '数据无来源': ['数据无来源', '数据来源', '出处'],
+                      '缺少异常处理': ['异常处理', '异常分支', '异常情况'],
+                      '验收标准模糊': ['验收标准', '验收条件'],
+                      '需求不可量化': ['不可量化', '量化指标'],
+                  }
+
+                  current_types = []
+                  for risk in risks:
+                      risk_point = risk[0].strip()
+                      matched = False
+                      for type_name, keywords in risk_type_keywords.items():
+                          if any(k in risk_point for k in keywords):
+                              current_types.append(type_name)
+                              matched = True
+                              break
+                      if not matched:
+                          current_types.append(risk_point[:8])
+
+                  jira_lines = []
+                  for risk in risks:
+                      risk_point = risk[0].strip()
+                      level_raw = risk[2].strip()
+                      position = risk[1].strip()
+                      suggestion = risk[3].strip()
+                      if '🔴' in level_raw or '高' in level_raw:
+                          priority = 'High'
+                      elif '🟡' in level_raw or '中' in level_raw:
+                          priority = 'Medium'
+                      else:
+                          priority = 'Low'
+                      jira_lines.append(f"【Bug】PRD风险：{risk_point} | 优先级：{priority} | 描述：{position} {suggestion}")
+
+                  jira_section = ''
+                  if jira_lines:
+                      jira_section = '\n📋 Jira任务格式：\n' + '\n'.join(jira_lines)
+
+                  summary_section = ''
+                  if len(current_types) >= 2:
+                      type_counts = Counter(current_types)
+                      most_common = type_counts.most_common(1)[0]
+                      if most_common[1] >= 2:
+                          summary_section = f'\n\n📊 本次检查最高频风险：{most_common[0]} （出现{most_common[1]}次）。建议重点关注{most_common[0]}问题。'
+
+                  final_output = llm_output + jira_section + summary_section
+
+                  return {
+                      'output': final_output
+                  }
+              except Exception as e:
+                  return {
+                      'output': f'⚠️ 结果处理异常，原始输出如下：\n\n{llm_output if llm_output else "（无输出）"}'
+                  }
+        code_language: python3
+        outputs:
+          output:
+            children: null
+            type: string
+        selected: false
+        title: PRD批量风险计数
+        type: code
+        variables:
+        - value_selector:
+          - '1776680000006'
+          - text
+          value_type: string
+          variable: llm_output
+      height: 52
+      id: '1776680000008'
+      position:
+        x: 2756
+        y: 735
+      positionAbsolute:
+        x: 2756
+        y: 735
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        answer: '{{#1776680000008.output#}}'
+        selected: false
+        title: PRD批量检查结果
+        type: answer
+        variables: []
+      height: 103
+      id: '1776680000009'
+      position:
+        x: 3098
+        y: 709
+      positionAbsolute:
+        x: 3098
+        y: 709
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        error_handle_mode: terminated
+        flatten_output: true
+        height: 238
+        is_parallel: false
+        iterator_input_type: array[string]
+        iterator_selector:
+        - '1776680000004'
+        - text
+        output_selector:
+        - '1777369510912'
+        - text
+        output_type: array[string]
+        parallel_nums: 10
+        selected: false
+        start_node_id: 1777369155274start
+        title: 迭代
+        type: iteration
+        width: 765
+      height: 238
+      id: '1777369155274'
+      position:
+        x: 1734.2857142857142
+        y: -3.7142857142857366
+      positionAbsolute:
+        x: 1734.2857142857142
+        y: -3.7142857142857366
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 765
+      zIndex: 1
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1777369155274start
+      parentId: '1777369155274'
+      position:
+        x: 60
+        y: 81
+      positionAbsolute:
+        x: 1794.2857142857142
+        y: 77.28571428571426
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        dataset_ids:
+        - 6sYJpbuDzfHrGzofq4pYPh12BFI9A+JvPUIDkQqNn498hPsQRUWQxoHxqTCcNYmr
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1777369155274'
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          top_k: 4
+          weights:
+            keyword_setting:
+              keyword_weight: 0
+            vector_setting:
+              embedding_model_name: text-embedding-3-large
+              embedding_provider_name: langgenius/openai/openai
+              vector_weight: 1
+            weight_type: customized
+        query_attachment_selector: []
+        query_variable_selector:
+        - '1777369155274'
+        - item
+        retrieval_mode: multiple
+        selected: false
+        title: 知识检索 4
+        type: knowledge-retrieval
+      height: 90
+      id: '1777369330228'
+      parentId: '1777369155274'
+      position:
+        x: 158.28571428571468
+        y: 65
+      positionAbsolute:
+        x: 1892.571428571429
+        y: 61.28571428571426
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1777369330228'
+          - result
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1777369155274'
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/deepseek/deepseek
+        prompt_template:
+        - id: 09d04262-a2c4-4e2d-9bd5-3ef2ad721336
+          role: system
+          text: |-
+            你是 SpecMark 反馈分类器。对每条用户反馈，直接输出分类结果。
+            ## 当前场景 行业/产品类型：{{#conversation.scene#}}
+            ## 分类维度
+            1. 情绪：负向 / 中性 / 正向 2. 问题类型：功能 / 性能 / 体验 / 内容 3. 优先级：高 / 中 / 低
+            ## ⭐ 黄金判定口诀（背下来！）
+            软件坏了 → 功能 | 软件能用但慢/卡 → 性能 | 软件能用但不好用/服务差 → 体验 | 算法推荐不准 → 内容
+            ## 核心规则（必须遵守）
+            ### 规则1：建议类一律→体验+低 "能不能加个XX""希望增加XX""建议加XX"→体验/低（即使提到"功能"二字）
+            ### 规则2：软件坏了→功能（最高优先级判断！） 闪退/崩溃/白屏/打不开/按钮没反应/数据丢失/支付扣钱但订单没生成/登录不上/验证码收不到/连接失败/保存失败→功能+高
+            ### 规则3：⚠️ 服务/配送/商家/客服问题→体验（最容易误判的区域！） 配送超时/慢/凉/洒 → 体验（软件没坏，是配送服务差） 骑手态度恶劣/扔餐/提前确认送达 → 体验（骑手行为≠软件bug） 商家取消订单/不承认问题 → 体验（商家行为≠软件故障） 食物有异物/变质/不新鲜 → 体验（食品质量≠软件bug） 客服不管/推诿/模板回复/不解决 → 体验（服务质量=体验维度） 退款慢/售后慢/等很久没人处理 → 体验（等待时间=体验） 在线问诊医生回复慢 → 体验（医疗服务等待≠软件加载慢）
+            ### 规则4：性能指标→性能 卡/卡顿/慢/耗电/发热/掉帧/延迟/缓冲长/包太大→性能（能用但不达标）
+            ### 规则5：算法输出质量→内容 推荐不准/搜索不对/匹配不公平/翻译错/图文不符/假货→内容
+            ### 规则6：价格/广告/操作复杂→体验 太贵/贵了/涨价/广告太多/推送骚扰/操作复杂/找不到入口/界面丑→体验
+            ### 规则7：正向反馈按维度分 夸速度/顺畅→性能/低 | 夸功能可用→功能/低 | 夸推荐/社区→内容/低 | 夸操作/配送→体验/低
+            ### 规则8：优先级规则 高优触发：闪退崩溃数据丢失支付失败安全漏洞 + 等超久骑手恶劣被自动续费食品安全 + 付费用户+任何问题 + 反讽+问题 缓解词降级：偶尔/有时/不影响使用/还行/可接受→降一级（但闪退/崩溃/数据丢失/支付失败/食品安全/被欺骗不降级）
+            ## Few-shot示例（必须参考）
+            输入："充了会员还是闪退，太垃圾了" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.95,"reasoning":"付费+核心功能失效+强烈负面"}
+            输入："能不能加个记账功能？" 输出：{"sentiment":"中性","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"建议类一律体验，即使提到功能二字"}
+            输入："能不能增加按价格排序的功能？" 输出：{"sentiment":"中性","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"建议类一律体验"}
+            输入："希望增加深色模式" 输出：{"sentiment":"中性","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"建议类一律体验"}
+            输入："推荐越来越不准了" 输出：{"sentiment":"负向","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"趋势性恶化，推荐是内容维度"}
+            输入："充值到账很快" 输出：{"sentiment":"正向","problem_type":"功能","priority":"低","confidence":0.9,"reasoning":"正向夸功能→功能"}
+            输入："音质很棒，值得付费" 输出：{"sentiment":"正向","problem_type":"性能","priority":"低","confidence":0.9,"reasoning":"正向夸音质→性能"}
+            输入："推荐算法不错，总能找到想要的" 输出：{"sentiment":"正向","problem_type":"内容","priority":"低","confidence":0.85,"reasoning":"正向夸推荐→内容"}
+            输入："退款到账很快" 输出：{"sentiment":"正向","problem_type":"功能","priority":"低","confidence":0.9,"reasoning":"正向夸功能→功能"}
+            输入："视频通话画质很清晰" 输出：{"sentiment":"正向","problem_type":"性能","priority":"低","confidence":0.9,"reasoning":"正向夸画质→性能"}
+            输入："社区氛围很好" 输出：{"sentiment":"正向","problem_type":"内容","priority":"低","confidence":0.9,"reasoning":"正向夸社区→内容"}
+            输入："滴滴打车等了20分钟没人接单" 输出：{"sentiment":"负向","problem_type":"体验","priority":"高","confidence":0.9,"reasoning":"等超长时间=严重影响"}
+            输入："骑手态度恶劣，直接把餐扔门口" 输出：{"sentiment":"负向","problem_type":"体验","priority":"高","confidence":0.95,"reasoning":"骑手恶劣=严重影响"}
+            输入："被自动续费了，完全没提醒" 输出：{"sentiment":"负向","problem_type":"体验","priority":"高","confidence":0.9,"reasoning":"被欺骗=严重影响"}
+            输入："真厉害，更新之后更卡了" 输出：{"sentiment":"负向","problem_type":"性能","priority":"高","confidence":0.95,"reasoning":"反讽+问题"}
+            输入："买了VIP推荐还是一样的差" 输出：{"sentiment":"负向","problem_type":"内容","priority":"高","confidence":0.9,"reasoning":"付费用户+问题"}
+            输入："发烫严重，不敢用了" 输出：{"sentiment":"负向","problem_type":"性能","priority":"高","confidence":0.9,"reasoning":"严重影响=不敢用"}
+            输入："偶尔会闪退" 输出：{"sentiment":"负向","problem_type":"功能","priority":"中","confidence":0.85,"reasoning":"有缓解词但闪退不降级"}
+            输入："定位不准，司机找不到我" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.9,"reasoning":"定位功能失效"}
+            输入："淘宝商品详情页图片显示不出来" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.9,"reasoning":"显示功能失效"}
+            输入："支付宝安全验证太麻烦了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"验证能用但体验差"}
+            输入："界面简洁好用，上手很快" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"正向夸操作→体验"}
+            输入："网易课堂字幕翻译有错误" 输出：{"sentiment":"负向","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"内容错误"}
+            输入："费用计算不透明" 输出：{"sentiment":"负向","problem_type":"内容","priority":"高","confidence":0.85,"reasoning":"信息不透明=严重影响"}
+            输入："一直加载转圈，根本打不开" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.95,"reasoning":"加载功能失效，打不开=功能坏"}
+            输入："总是掉线，根本没法用" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.95,"reasoning":"连接功能失效"}
+            输入："语音转文字准确率太低" 输出：{"sentiment":"负向","problem_type":"功能","priority":"中","confidence":0.85,"reasoning":"功能结果错误但非崩溃"}
+            输入："会员太贵了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"价格/费用→体验"}
+            输入："配送费太贵了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"价格/费用→体验"}
+            输入："皮肤价格越来越贵" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"价格/费用→体验"}
+            输入："搜索结果跟关键词完全不匹配" 输出：{"sentiment":"负向","problem_type":"内容","priority":"高","confidence":0.9,"reasoning":"搜索算法输出=内容"}
+            输入："匹配机制不公平" 输出：{"sentiment":"负向","problem_type":"内容","priority":"高","confidence":0.9,"reasoning":"匹配算法输出=内容"}
+            输入："朋友圈广告太多了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"低","confidence":0.85,"reasoning":"广告多=体验差"}
+            输入："建议优化搜索算法" 输出：{"sentiment":"中性","problem_type":"内容","priority":"低","confidence":0.85,"reasoning":"建议优化算法→内容"}
+            输入："滤镜效果很好看" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"夸效果→体验"}
+            输入："多端同步很顺畅" 输出：{"sentiment":"正向","problem_type":"性能","priority":"低","confidence":0.9,"reasoning":"夸顺畅→性能"}
+            输入："分类很详细，容易找到" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"容易找到=操作体验"}
+            输入："配送速度快，餐还是热的" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"夸配送→体验"}
+            输入："更新包太大了" 输出：{"sentiment":"负向","problem_type":"性能","priority":"低","confidence":0.85,"reasoning":"包大小=性能指标"}
+            输入："等了2小时才送到，外卖都凉了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"高","confidence":0.9,"reasoning":"配送服务差=体验，软件没坏"}
+            输入："商家接单了又取消订单" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"商家行为=体验，软件没坏"}
+            输入："食物里吃出头发，客服不管" 输出：{"sentiment":"负向","problem_type":"体验","priority":"高","confidence":0.9,"reasoning":"客服服务差=体验，软件没坏"}
+            输入："支付扣了钱但订单没生成" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.95,"reasoning":"支付功能真的坏了"}
+            输入："安全验证太麻烦了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"验证能用但麻烦=体验中"}
+            输入："歌词和歌曲不同步" 输出：{"sentiment":"负向","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"歌词同步=内容匹配"}
+            输入："偶尔有点噪音，但整体还行" 输出：{"sentiment":"中性","problem_type":"体验","priority":"低","confidence":0.8,"reasoning":"有缓解词+还行=中性"}
+            输入："加载慢一点，不过可以接受" 输出：{"sentiment":"中性","problem_type":"性能","priority":"低","confidence":0.8,"reasoning":"有缓解词+可接受=中性"}
+            输入："内容参差不齐，有的好有的差" 输出：{"sentiment":"中性","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"中性+内容=中"}
+            输入："搜索结果全是翻唱" 输出：{"sentiment":"负向","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"搜索质量=内容"}
+            输入："退款成功了，客服处理很快" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"夸客服=体验"}
+            输入："评论区审核太严，正常评论被删" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.9,"reasoning":"删评=功能行为+高"}
+            输入："举报系统形同虚设" 输出：{"sentiment":"负向","problem_type":"功能","priority":"高","confidence":0.9,"reasoning":"举报功能失效=高"}
+            输入："理财页面数据更新不及时" 输出：{"sentiment":"负向","problem_type":"内容","priority":"中","confidence":0.85,"reasoning":"数据更新=内容维度"}
+            输入："视频保存到本地失败" 输出：{"sentiment":"负向","problem_type":"功能","priority":"中","confidence":0.85,"reasoning":"保存失败非核心=中"}
+            输入："发送文件大小限制太小了" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"限制=体验中"}
+            输入："基金收益计算方式看不懂" 输出：{"sentiment":"负向","problem_type":"内容","priority":"低","confidence":0.8,"reasoning":"看不懂非错误=低"}
+            输入："广告太多，刷5个有2个广告" 输出：{"sentiment":"负向","problem_type":"体验","priority":"中","confidence":0.85,"reasoning":"广告多=体验中"}
+            输入："突然切歌了" 输出：{"sentiment":"负向","problem_type":"功能","priority":"中","confidence":0.85,"reasoning":"切歌非核心功能=中"}
+            输入："界面设计还行，就是操作有点复杂" 输出：{"sentiment":"负向","problem_type":"体验","priority":"低","confidence":0.8,"reasoning":"操作复杂=负向但轻微=低"}
+            输入："安全措施很到位" 输出：{"sentiment":"正向","problem_type":"体验","priority":"低","confidence":0.9,"reasoning":"夸安全措施→体验"}
+            输入："日程功能很方便" 输出：{"sentiment":"正向","problem_type":"功能","priority":"低","confidence":0.9,"reasoning":"正向夸功能→功能"}
+            输入："举报了没处理" 输出：{"sentiment":"负向","problem_type":"功能","priority":"中","confidence":0.85,"reasoning":"举报功能失效"}
+            ## 输出格式（只输出JSON）
+            { "sentiment": "负向/中性/正向", "problem_type": "功能/性能/体验/内容", "priority": "高/中/低", "confidence": 0.0到1.0的置信度, "reasoning": "简要判断依据，不超过30字" }
+        selected: false
+        structured_output_enabled: true
+        title: LLM 6
+        type: llm
+        vision:
+          enabled: false
+      height: 88
+      id: '1777369510912'
+      parentId: '1777369155274'
+      position:
+        x: 506
+        y: 61
+      positionAbsolute:
+        x: 2240.285714285714
+        y: 57.28571428571426
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+      zIndex: 1002
+    viewport:
+      x: -943
+      y: 171
+      zoom: 0.7
+  rag_pipeline_variables: []
