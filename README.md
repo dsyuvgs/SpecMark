@@ -136,9 +136,11 @@ SpecMark/
 │   ├── test_set_200.csv
 │   └── test_set_300.csv
 ├── scripts/
-│   ├── batch_test.py
-│   ├── generate_reviews.py
-│   └── requirements.txt
+│   ├── batch_test.py                      ← 批量测试脚本
+│   ├── benchmark_agent.py                 ← Agent vs 裸LLM基准测试
+│   ├── generate_reviews.py                ← 生成测试评价
+│   ├── test_output_samples.py             ← 输出样例验证
+│   └── requirements.txt                   ← 依赖
 └── docs/
     ├── 设计文档.md                          ← 为什么做、怎么做的、踩过的坑
     ├── Agent产品逻辑文档.md                  ← Agent完整逻辑说明

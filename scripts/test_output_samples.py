@@ -5,7 +5,7 @@ import time
 import os
 from datetime import datetime
 
-API_KEY = os.environ.get('DIFY_API_KEY', 'app-7D4eJnQygDHJFFSmda4YbURl')
+API_KEY = os.environ.get('DIFY_API_KEY', '')
 BASE_URL = os.environ.get('DIFY_BASE_URL', 'https://api.dify.ai/v1/chat-messages')
 TIMEOUT = 120
 

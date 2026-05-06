@@ -1,8 +1,8 @@
 import asyncio, aiohttp, json, csv, time, os, re
 from datetime import datetime
 
-API_KEY = 'app-7D4eJnQygDHJFFSmda4YbURl'
-BASE_URL = 'https://api.dify.ai/v1/chat-messages'
+API_KEY = os.environ.get('DIFY_API_KEY', '')
+BASE_URL = os.environ.get('DIFY_BASE_URL', 'https://api.dify.ai/v1/chat-messages')
 CONCURRENCY = 1
 TIMEOUT = 120
 
