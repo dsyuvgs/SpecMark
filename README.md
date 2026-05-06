@@ -124,13 +124,10 @@ SpecMark/
 ├── LICENSE
 ├── .gitignore
 ├── workflow/
-│   ├── SpecMark最新.yml                     ← 主工作流，导入Dify就能用
-│   ├── SpecMark-BareModel-Test.yml        ← 裸模型基线对比工作流
-│   └── _archive/                          ← 开发过程中的调试脚本和备份
+│   └── SpecMark最新.yml                     ← 主工作流，导入Dify就能用
 ├── knowledge/
 │   ├── 📚知识库-PRD规范检查.md              ← PRD检查规则
-│   ├── 📚知识库-反馈分类规则.md              ← 反馈分类规则+品类映射+few-shot
-│   └── 📚知识库-反馈分类规则-旧版.md         ← 旧版归档
+│   └── 📚知识库-反馈分类规则.md              ← 反馈分类规则+品类映射+few-shot
 ├── tests/
 │   ├── test_set_100.csv
 │   ├── test_set_200.csv
