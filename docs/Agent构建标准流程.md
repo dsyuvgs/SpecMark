@@ -127,7 +127,7 @@
 
 | 配置项 | 推荐值 | 原因 |
 |--------|--------|------|
-| LLM模型 | deepseek-chat | 性价比高，分类能力强 |
+| LLM模型 | deepseek-chat（默认）/ 智谱GLM-4 / 通义千问 / GPT-4o | 可插拔，按需选择 |
 | temperature | 0.1 | 分类任务需要稳定性 |
 | 知识库检索模式 | single | 知识库小，不需要多路召回 |
 | context.enabled | true | LLM必须引用知识库检索结果 |
@@ -231,9 +231,9 @@ python batch_test.py
 |------|------|---------|
 | 1 | 创建2个知识库 | PRD规范检查 + 反馈分类规则 |
 | 2 | 上传知识库文件 | 文件名与节点名一致 |
-| 3 | 导入工作流YAML | SpecMark最新.yml |
+| 3 | 导入工作流YAML | SpecMark.yml |
 | 4 | 绑定知识库 | 3个节点分别绑定对应知识库 |
-| 5 | 配置模型API Key | deepseek-chat |
+| 5 | 配置模型API Key | 默认deepseek-chat，可切换为其他模型 |
 | 6 | 测试运行 | 验证各链路正常 |
 | 7 | 发布上线 | 获取访问链接 |
 
@@ -266,7 +266,7 @@ python batch_test.py
 ```
 SpecMark/
 ├── workflow/
-│   └── SpecMark最新.yml              # Dify工作流配置
+│   └── SpecMark.yml              # Dify工作流配置
 ├── knowledge/
 │   ├── 📚知识库-PRD规范检查.md     # PRD检查规则
 │   └── 📚知识库-反馈分类规则.md     # 反馈分类规则
