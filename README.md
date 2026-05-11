@@ -213,9 +213,7 @@ SpecMark/
 │   ├── test_output_samples.py             ← 输出样例验证
 │   └── requirements.txt                   ← 依赖
 └── docs/
-    ├── 设计文档.md                          ← 为什么做、怎么做的、踩过的坑
-    ├── Agent产品逻辑文档.md                  ← Agent完整逻辑说明
-    └── Agent构建标准流程.md                  ← 从0到1构建同类Agent的SOP
+    └── Agent产品逻辑文档.md                  ← Agent完整逻辑说明
 ```
 
 ---

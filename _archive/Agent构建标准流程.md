@@ -266,16 +266,27 @@ python batch_test.py
 ```
 SpecMark/
 ├── workflow/
-│   └── SpecMark.yml              # Dify工作流配置
+│   └── SpecMark.yml                # Dify工作流配置
 ├── knowledge/
-│   ├── 📚知识库-PRD规范检查.md     # PRD检查规则
-│   └── 📚知识库-反馈分类规则.md     # 反馈分类规则
+│   ├── 📚知识库-PRD规范检查.md       # PRD检查规则
+│   └── 📚知识库-反馈分类规则.md       # 反馈分类规则
 ├── tests/
-│   └── test_set_300.csv            # 测试数据集
+│   ├── test_set_100.csv            # 100条测试数据集
+│   ├── test_set_200.csv            # 200条测试数据集
+│   └── test_set_300.csv            # 300条测试数据集
 ├── docs/
 │   ├── 设计文档.md                  # 设计决策+迭代历程
 │   ├── Agent产品逻辑文档.md          # 架构+分类逻辑
 │   └── Agent构建标准流程.md          # 构建SOP
-└── scripts/
-    └── batch_test.py               # 批量测试脚本
+├── scripts/
+│   ├── batch_test.py               # 批量测试脚本
+│   ├── benchmark_agent.py          # Agent vs 裸LLM对比脚本
+│   ├── generate_reviews.py         # 测试数据生成脚本
+│   ├── test_output_samples.py      # 输出样例测试脚本
+│   └── requirements.txt            # Python依赖
+├── README.md                       # 项目说明
+├── 项目说明.md                      # 项目概览
+├── 效率对比与输出样例.md              # 效率对比数据
+├── LICENSE                         # MIT许可证
+└── .gitignore                      # Git忽略配置
 ```
