@@ -4,6 +4,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+**[面向谁？](#面向谁) · [效果数据](#效果数据) · [Agent vs 裸LLM](#agent-vs-裸llm) · [核心架构](#核心架构) · [快速开始](#快速开始) · [仓库结构](#仓库结构)**
+
 ---
 
 ## 面向谁？
