@@ -1,3 +1,7 @@
+"""
+generate_reviews.py - 生成测试评价数据
+功能：按品类和情绪分布随机生成用户反馈文本，用于扩充测试集
+"""
 import json
 import random
 import os

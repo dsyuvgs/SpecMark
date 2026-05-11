@@ -19,3 +19,5 @@ build/
 tests/agent_results.json
 tests/agent_*.txt
 tests/eval_set.json
+tests/outputs/
+结果.csv

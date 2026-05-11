@@ -1,3 +1,10 @@
+"""
+batch_test.py - SpecMark批量测试脚本
+功能：读取测试集CSV，并发调用Dify API，输出分类结果和准确率指标
+用法：set DIFY_API_KEY=app-xxxx && python batch_test.py
+输入：tests/test_set_100.csv（默认）
+输出：tests/agent_results.json + 控制台准确率统计
+"""
 import asyncio
 import aiohttp
 import json

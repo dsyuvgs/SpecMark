@@ -1,3 +1,7 @@
+"""
+test_output_samples.py - 输出样例验证脚本
+功能：调用Dify API获取典型case的输出样例，用于文档展示
+"""
 import asyncio
 import aiohttp
 import json

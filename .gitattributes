@@ -1,0 +1,4 @@
+*.md text working-tree-encoding=UTF-8
+*.yml text working-tree-encoding=UTF-8
+*.csv text working-tree-encoding=UTF-8
+*.py text working-tree-encoding=UTF-8

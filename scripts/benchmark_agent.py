@@ -1,3 +1,10 @@
+"""
+benchmark_agent.py - Agent vs 裸LLM基准对比脚本
+功能：对同一批反馈分别调用Agent工作流和裸LLM，对比分类结果差异
+用法：set DIFY_API_KEY=app-xxxx && python benchmark_agent.py
+输入：tests/test_set_100.csv（默认）
+输出：控制台对比统计（一致率、差异分析）
+"""
 import asyncio, aiohttp, json, csv, time, os, re
 from datetime import datetime
 
