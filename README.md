@@ -162,6 +162,8 @@
 
 把 `workflow/SpecMark.yml` 导入 Dify。
 
+![导入工作流](docs/screenshots/step1-import-workflow.png)
+
 **2. 创建知识库**
 
 在Dify中创建2个知识库：
@@ -171,6 +173,8 @@
 | 📚知识库-PRD规范检查 | `knowledge/📚知识库-PRD规范检查.md` |
 | 📚知识库-反馈分类规则 | `knowledge/📚知识库-反馈分类规则.md` |
 
+![创建知识库](docs/screenshots/step2-create-knowledge.png)
+
 **3. 绑定知识库**
 
 | 节点名 | 绑定知识库 |
@@ -178,6 +182,8 @@
 | 📚知识库-PRD规范检查 | 📚知识库-PRD规范检查 |
 | 📚知识库-反馈分类规则 | 📚知识库-反馈分类规则 |
 | 📚知识库-PRD规范检查(批量) | 📚知识库-PRD规范检查（同一个） |
+
+![绑定知识库](docs/screenshots/step3-bind-knowledge.png)
 
 **4. 配置模型**
 
@@ -236,6 +242,7 @@ SpecMark/
     ├── DESIGN.md                       ← 设计决策+迭代历程
     ├── LOGIC.md                        ← Agent完整逻辑说明
     ├── BENCHMARK.md                    ← 效率对比数据+输出样例
+    ├── screenshots/                    ← 部署截图
     ├── ARCHIVE_BUILD.md                ← 归档：早期构建流程
     └── ARCHIVE_DESIGN.md               ← 归档：早期设计文档
 ```
